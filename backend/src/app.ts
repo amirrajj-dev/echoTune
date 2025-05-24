@@ -10,6 +10,8 @@ import songRoutes from './routes/song.route'
 import albumRoutes from './routes/album.route';
 import statRoutes from './routes/stat.route';
 import adminRoutes from './routes/admin.route';
+//db
+import { connectToDb } from './db/connectToDb';
 
 dotenv.config();;
 
@@ -33,6 +35,7 @@ app.use('/api/songs', songRoutes);
 app.use('/api/albums', albumRoutes);
 app.use('/api/stats', statRoutes);
 
-app.listen(port, () => {
+app.listen(port , async () => {
+  await connectToDb();
   console.log(`Server running on http://localhost:${port}`);
 });
