@@ -12,7 +12,9 @@ import statRoutes from './routes/stat.route';
 import adminRoutes from './routes/admin.route';
 //db
 import { connectToDb } from './db/connectToDb';
+//middlewares
 import errorMiddleware from './middlewares/error.middleware';
+import {clerkMiddleware} from '@clerk/express'
 
 dotenv.config();;
 
@@ -20,6 +22,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
+app.use(clerkMiddleware()) // add auth to request object make req.auth available
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet({
   contentSecurityPolicy: false, // Disable CSP for simplicity, adjust as needed
