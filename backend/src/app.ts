@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
+import fileUpload from 'express-fileupload'
 //routes
 import userRoutes from './routes/user.route'
 import authRoutes from './routes/auth.route';
@@ -15,6 +16,7 @@ import { connectToDb } from './db/connectToDb';
 //middlewares
 import errorMiddleware from './middlewares/error.middleware';
 import {clerkMiddleware} from '@clerk/express'
+import path from 'path';
 
 dotenv.config();;
 
@@ -24,6 +26,13 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(clerkMiddleware()) // add auth to request object make req.auth available
 app.use(express.urlencoded({ extended: true }));
+
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir:  path.join(__dirname, 'temp'),
+  createParentPath: true,
+  limits: { fileSize: 10 * 1024 * 1024 } // Limit file size to 10MB
+}))
 app.use(helmet({
   contentSecurityPolicy: false, // Disable CSP for simplicity, adjust as needed
 }));
