@@ -3,6 +3,13 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
+//routes
+import userRoutes from './routes/user.route'
+import authRoutes from './routes/auth.route';
+import songRoutes from './routes/song.route'
+import albumRoutes from './routes/album.route';
+import statRoutes from './routes/stat.route';
+import adminRoutes from './routes/admin.route';
 
 dotenv.config();;
 
@@ -19,12 +26,13 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173'
 }));
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
-});
+app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/songs', songRoutes);
+app.use('/api/albums', albumRoutes);
+app.use('/api/stats', statRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
-
-export default app;
