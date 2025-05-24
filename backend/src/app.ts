@@ -12,6 +12,7 @@ import statRoutes from './routes/stat.route';
 import adminRoutes from './routes/admin.route';
 //db
 import { connectToDb } from './db/connectToDb';
+import errorMiddleware from './middlewares/error.middleware';
 
 dotenv.config();;
 
@@ -34,6 +35,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/songs', songRoutes);
 app.use('/api/albums', albumRoutes);
 app.use('/api/stats', statRoutes);
+
+app.use(errorMiddleware)
 
 app.listen(port , async () => {
   await connectToDb();
