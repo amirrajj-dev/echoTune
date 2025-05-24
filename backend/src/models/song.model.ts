@@ -25,6 +25,14 @@ const schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "album",
         required: true
+    },
+    imagePublicId : {
+        type: String,
+        required: true // this field gets used when we want to delete a song assets like audio and image from cloudinary
+    },
+    audioPublicId : {
+        type: String,
+        required: true // this field gets used when we want to delete a song assets like audio and image from cloudinary
     }
 },{
     timestamps: true

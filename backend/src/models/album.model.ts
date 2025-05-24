@@ -13,6 +13,10 @@ const schema = new mongoose.Schema({
         type: String,
         required: true
     },
+    imagePublicId : {
+        type: String,
+        required: true // This is the public ID of the image in Cloudinary used for deletion
+    },
     releaseYear : {
         type: Number,
         required: true

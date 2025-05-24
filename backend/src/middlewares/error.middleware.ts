@@ -7,7 +7,7 @@ export const errorMiddleware = (
   next: NextFunction
 ) => {
   res.status(err.status || 500).json({
-    message: err instanceof Error ? err.message : "Internal Server Error",
+    message: process.env.NODE_ENV === 'production' ? "Internal Server Error" : err instanceof Error ? err.message : "An error occurred",
     success: false,
   });
 };
