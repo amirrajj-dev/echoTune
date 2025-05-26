@@ -20,7 +20,9 @@
     "build": "tsc",
     "start": "node ./backend/dist/app.js",
     "dev": "nodemon --watch ./backend/src --exec ts-node ./backend/src/app.ts",
-    "prestart": "npm run build"
+    "prestart": "npm run build",
+    "seed:songs": "ts-node ./backend/src/seeds/songs.ts",
+    "seed:albums" : "ts-node ./backend/src/seeds/albums.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.2",

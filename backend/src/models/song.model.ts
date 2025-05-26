@@ -24,7 +24,7 @@ const schema = new mongoose.Schema({
     albumId : {
         type: mongoose.Schema.Types.ObjectId,
         ref: "album",
-        required: true
+        required: false
     },
     imagePublicId : {
         type: String,
