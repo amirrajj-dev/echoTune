@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../configs/axios";
 import { motion } from "framer-motion";
 import { Music3 } from "lucide-react";
+import { useTheme } from "../store/theme.store";
 
 const updateApiToken = (token: string | null) => {
   if (token) {
@@ -15,6 +16,7 @@ const updateApiToken = (token: string | null) => {
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { getToken } = useAuth();
   const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const initAuth = async () => {
@@ -34,7 +36,15 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-primary to-secondary text-white">
+      <div
+        className={`flex items-center justify-center ${
+          theme === "dark"
+            ? "bg-base-300"
+            : theme === "night"
+            ? "bg-base-300"
+            : "bg-gradient-to-br from-primary to-secondary"
+        } h-screen text-white`}
+      >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -67,7 +77,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.7 }}
             transition={{ delay: 0.6 }}
-            className="text-sm text-base-content"
+            className="text-sm text-white/80 tracking-wide text-center"
           >
             Spinning the beat 🎵💙
           </motion.p>
