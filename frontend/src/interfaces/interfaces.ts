@@ -21,3 +21,13 @@ export interface IAlbum {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IUser {
+  _id: string;
+  fullName: string;
+  imageUrl: string;
+  clerkId: string;
+  favouriteSongs: ISong[];
+  createdAt: Date;
+  updatedAt: Date;
+}
