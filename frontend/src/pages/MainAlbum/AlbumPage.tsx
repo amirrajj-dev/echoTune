@@ -143,7 +143,7 @@ const AlbumPage = () => {
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   className={`group cursor-pointer hover:bg-base-200 transition rounded-lg ${
-                    isCurrent ? "bg-base-100/20" : ""
+                    isCurrent ? "bg-base-100" : ""
                   }`}
                 >
                   <td className="w-10 text-center">
