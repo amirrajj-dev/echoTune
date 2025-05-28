@@ -25,7 +25,7 @@ const Playlists = () => {
         Playlists
       </motion.h2>
 
-      <div className="max-h-[400px] overflow-y-auto flex flex-col gap-2">
+      <div className="max-h-[300px] md:max-h-[400px] overflow-y-auto flex flex-col gap-2">
         {isLoading ? (
           <PlaylistsSkeleton />
         ) : albums && albums?.length > 0 ? (

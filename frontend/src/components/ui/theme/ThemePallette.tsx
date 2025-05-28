@@ -1,8 +1,7 @@
-import { Palette } from "lucide-react";
+import { Palette, Check } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../../../store/theme.store";
-import {Check} from 'lucide-react'
 
 const themes = [
   { theme: "light", bg: "bg-white", text: "text-base-300" },
@@ -42,19 +41,20 @@ const itemVariants = {
 
 const ThemePallette = () => {
   const [showThemePallette, setShowThemePallette] = useState(false);
-  const {setTheme , theme : currrentTheme} = useTheme()
+  const { setTheme, theme: currentTheme } = useTheme();
+
   const handleChangeTheme = (theme: string) => {
     setShowThemePallette(false);
     setTheme(theme);
   };
 
   return (
-    <div className="relative z-50">
+    <div className="relative z-[1000]">
       <motion.button
-        onClick={() => {setShowThemePallette((prev) => !prev);}}
-        initial={{opacity : 0 , x : -100}}
-        animate={{opacity : 1 , x : 0}}
-        transition={{duration : 0.3 , type : 'spring' , stiffness : 180 , damping : 18}}
+        onClick={() => setShowThemePallette((prev) => !prev)}
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3, type: "spring", stiffness: 180, damping: 18 }}
         whileTap={{ scale: 0.95 }}
         className="btn btn-soft bg-transparent border-none shadow-none text-base-content"
       >
@@ -69,7 +69,7 @@ const ThemePallette = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute top-12 left-0 sm:left-auto right-auto sm:right-0 w-56 p-3 bg-base-200/80 backdrop-blur-sm rounded-xl shadow-lg flex flex-col gap-2"
+            className="absolute z-[1000] top-12 left-0 sm:left-auto right-auto sm:right-0 w-56 p-3 bg-base-200/80 backdrop-blur-sm rounded-xl shadow-lg flex flex-col gap-2"
           >
             {themes.map((theme) => (
               <motion.button
@@ -81,7 +81,7 @@ const ThemePallette = () => {
                 className={`btn btn-sm justify-between btn-ghost rounded-md px-3 font-medium flex items-center capitalize transition-all ${theme.bg} ${theme.text}`}
               >
                 {theme.theme}
-                {currrentTheme ===  theme.theme && <Check className="w-4 h-4" />}
+                {currentTheme === theme.theme && <Check className="w-4 h-4" />}
               </motion.button>
             ))}
           </motion.div>

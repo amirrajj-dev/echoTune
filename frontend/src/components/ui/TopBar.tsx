@@ -1,82 +1,191 @@
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/clerk-react";
 import SignInWithGoogleBtn from "./SignInWithGoogleBtn";
 import { motion } from "framer-motion";
-import { Heart, LayoutDashboard } from "lucide-react";
+import { Heart, LayoutDashboard, Menu } from "lucide-react";
 import ThemePallette from "./theme/ThemePallette";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance } from "../../configs/axios";
+import { useEffect } from "react";
+
+interface IsAdminResponse {
+  success: boolean;
+}
 
 const TopBar = () => {
-  const isAdmin = true;
+  const { isSignedIn } = useAuth();
+  const { data: isAdmin, isLoading } = useQuery({
+    queryKey: ["isAdmin"],
+    queryFn: async () => {
+      const res = await axiosInstance.get<IsAdminResponse>(
+        "/admin/check-admin"
+      );
+      return res.data.success;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
 
-  return (
-    <motion.div
-      className="sticky top-4 z-50 bg-base-100/60 backdrop-blur-lg rounded-t-xl shadow-xl px-6 py-4 mx-auto max-w-6xl flex items-center justify-between border border-white/10"
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-    >
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (isSignedIn) return;
+    queryClient.removeQueries({ queryKey: ["friends"] });
+    queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+  }, [isSignedIn, queryClient]);
+
+  if (isLoading) {
+    return (
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
+        className="sticky top-4 z-50 bg-base-100/60 backdrop-blur-lg rounded-t-xl shadow-xl px-6 py-4 mx-auto max-w-6xl flex items-center justify-between border border-white/10 animate-pulse"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Logo />
+        <div className="h-8 w-28 bg-base-300 rounded-md" />
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-base-300" />
+          <div className="h-8 w-8 rounded-full bg-base-300" />
+          <div className="h-8 w-32 rounded-md bg-base-300" />
+          <div className="h-10 w-10 rounded-full bg-base-300" />
+        </div>
       </motion.div>
+    );
+  }
 
-      <motion.div
-        className="flex items-center gap-3"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          visible: {
-            transition: {
-              staggerChildren: 0.1,
-              delayChildren: 0.3,
-            },
-          },
-        }}
-      >
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="btn btn-circle bg-transparent border-none shadow-none text-rose-500 hover:bg-rose-100 transition"
+  return (
+    <div className="">
+      <div className="drawer">
+        <input id="topbar-drawer" type="checkbox" className="drawer-toggle" />
+
+        <motion.div
+          className="drawer-content w-full sticky top-4 bg-base-100/60 backdrop-blur-lg border border-white/10 shadow-xl px-6 py-4 mx-auto max-w-6xl rounded-xl flex flex-wrap items-center justify-between z-[900]"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <Heart className="w-5 h-5" />
-        </motion.button>
+          {/* Logo */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Logo />
+          </motion.div>
 
-        <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
-          <ThemePallette />
+          {/* Desktop-only items */}
+          <motion.div
+            className="hidden sm:flex items-center gap-3"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.3,
+                },
+              },
+            }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn btn-circle bg-transparent border-none shadow-none text-rose-500 hover:bg-rose-100 transition"
+            >
+              <Heart className="w-5 h-5" />
+            </motion.button>
+
+            <motion.div
+              variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+            >
+              <ThemePallette />
+            </motion.div>
+
+            {isAdmin && (
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: -5 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+              >
+                <Link to="/admin-dashboard">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="btn bg-gradient-to-br from-primary to-secondary text-white"
+                  >
+                    <LayoutDashboard size={16} />
+                    Admin
+                  </motion.button>
+                </Link>
+              </motion.div>
+            )}
+
+            <SignedOut>
+              <motion.div
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+              >
+                <SignInWithGoogleBtn />
+              </motion.div>
+            </SignedOut>
+
+            <SignedIn>
+              <motion.div
+                whileTap={{ scale: 0.95 }}
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+              >
+                <UserButton />
+              </motion.div>
+            </SignedIn>
+          </motion.div>
+
+          {/* Mobile menu button */}
+          <motion.div className="sm:hidden">
+            <label
+              htmlFor="topbar-drawer"
+              className="btn btn-circle bg-gradient-to-tr from-primary to-secondary drawer-button text-white"
+            >
+              <Menu />
+            </label>
+          </motion.div>
         </motion.div>
 
-        {isAdmin && (
-          <motion.div variants={{ hidden: { opacity: 0, y: -5 }, visible: { opacity: 1, y: 0 } }}>
-            <Link to="/admin-dashboard">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn bg-gradient-to-br from-primary to-secondary text-white"
-              >
-                <LayoutDashboard size={16} />
-                Admin Dashboard
-              </motion.button>
-            </Link>
-          </motion.div>
-        )}
-
-        <SignedOut>
-          <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
-            <SignInWithGoogleBtn />
-          </motion.div>
-        </SignedOut>
-
-        <SignedIn>
-          <motion.div whileTap={{ scale: 0.95 }} variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
-            <UserButton />
-          </motion.div>
-        </SignedIn>
-      </motion.div>
-    </motion.div>
+        {/* Drawer side content */}
+        <div className="drawer-side z-40">
+          <label
+            htmlFor="topbar-drawer"
+            className="drawer-overlay z-30"
+          ></label>
+          <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content gap-2">
+            <li>
+              <button className="btn btn-ghost justify-start gap-2 text-rose-500">
+                <Heart className="w-5 h-5" /> Favorites
+              </button>
+            </li>
+            <li>
+              <ThemePallette />
+            </li>
+            {isAdmin && (
+              <li>
+                <Link to="/admin-dashboard" className="btn btn-outline gap-2">
+                  <LayoutDashboard size={16} />
+                  Admin Dashboard
+                </Link>
+              </li>
+            )}
+            <SignedOut>
+              <li>
+                <SignInWithGoogleBtn />
+              </li>
+            </SignedOut>
+            <SignedIn>
+              <li>
+                <UserButton afterSignOutUrl="/" />
+              </li>
+            </SignedIn>
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 };
 

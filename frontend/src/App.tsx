@@ -15,7 +15,7 @@ const App = () => {
   }, [initializeTheme]);
   return (
     <div
-      className={`font-mono transition-all p-1 h-screen ${
+      className={`font-mono transition-all p-1 min-h-screen ${
         theme === "dark"
           ? "bg-base-300"
           : theme === "night"
