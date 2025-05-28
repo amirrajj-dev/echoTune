@@ -20,13 +20,8 @@ const containerVariants = {
 };
 
 const MadeForYouSongs = () => {
-   const {
-      currentSong,
-      setCurrentSong,
-      isPlaying,
-      playSong,
-      pauseSong,
-    } = useMusic();
+  const { currentSong, setCurrentSong, isPlaying, playSong, pauseSong } =
+    useMusic();
   const { data: madeForYouSongs = [], isLoading } = useQuery({
     queryKey: ["madeForYouSongs"],
     queryFn: async () => {
@@ -62,9 +57,9 @@ const MadeForYouSongs = () => {
       <h2 className="text-2xl font-bold">Made For You</h2>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-24 bg-base-300 rounded-xl skeleton" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-pulse">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-56 bg-base-300 rounded-xl skeleton" />
           ))}
         </div>
       ) : (
