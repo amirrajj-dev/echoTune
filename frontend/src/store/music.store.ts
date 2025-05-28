@@ -7,7 +7,7 @@ interface MusicStore {
   isPlaying: boolean;
   audio: HTMLAudioElement | null;
 
-  setCurrentSong: (song: ISong) => void;
+  setCurrentSong: (song: ISong, virtualAlbum?: IAlbum) => void;
   setCurrentAlbum: (album: IAlbum) => void;
   playSong: () => void;
   pauseSong: () => void;
@@ -20,25 +20,32 @@ export const useMusic = create<MusicStore>((set, get) => ({
   isPlaying: false,
   audio: null,
 
-  setCurrentSong(song) {
-    const { audio } = get();
+  setCurrentSong(song, virtualAlbum) {
+    const { audio, pauseSong } = get();
 
+    // Pause and clean up existing audio
     if (audio) {
-      audio.pause();
+      pauseSong();
       audio.src = "";
       audio.onended = null;
     }
 
+    // Create new audio instance
     const newAudio = new Audio(song.audioUrl);
-
     newAudio.onended = () => {
       get().nextSong();
     };
 
-    newAudio.play();
+    // Play the new song
+    newAudio.play().catch((error) => {
+      console.error("Error playing audio:", error);
+      set({ isPlaying: false });
+    });
 
+    // Set the virtual album if provided, otherwise keep currentAlbum
     set({
       currentSong: song,
+      currentAlbum: virtualAlbum ?? get().currentAlbum,
       isPlaying: true,
       audio: newAudio,
     });
@@ -51,7 +58,10 @@ export const useMusic = create<MusicStore>((set, get) => ({
   playSong() {
     const { audio } = get();
     if (audio) {
-      audio.play();
+      audio.play().catch((error) => {
+        console.error("Error playing audio:", error);
+        set({ isPlaying: false });
+      });
       set({ isPlaying: true });
     }
   },
@@ -65,17 +75,21 @@ export const useMusic = create<MusicStore>((set, get) => ({
   },
 
   nextSong() {
-    const { currentSong, currentAlbum, setCurrentSong } = get();
-    if (!currentAlbum || !currentSong) return;
+    const { currentSong, currentAlbum, setCurrentSong, pauseSong } = get();
+    if (!currentAlbum || !currentSong) {
+      pauseSong();
+      return;
+    }
 
     const songs = currentAlbum.songs;
     const currentIndex = songs.findIndex((s) => s._id === currentSong._id);
-    const next = songs[currentIndex + 1];
+    const nextSong = songs[currentIndex + 1];
 
-    if (next) {
-      setCurrentSong(next);
+    if (nextSong) {
+      setCurrentSong(nextSong);
     } else {
-      set({ isPlaying: false });
+      pauseSong();
+      set({ currentSong: null, isPlaying: false });
     }
   },
 }));
