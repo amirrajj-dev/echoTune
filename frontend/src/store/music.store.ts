@@ -4,45 +4,60 @@ import type { ISong, IAlbum } from "../interfaces/interfaces";
 interface MusicStore {
   currentSong: ISong | null;
   currentAlbum: IAlbum | null;
-  isPlaying: boolean;
   audio: HTMLAudioElement | null;
+  isPlaying: boolean;
+  isRepeat: boolean;
+  isRepeatLoop: boolean;
+  isShuffle: boolean;
+  volume: number;
 
   setCurrentSong: (song: ISong, virtualAlbum?: IAlbum) => void;
   setCurrentAlbum: (album: IAlbum) => void;
   playSong: () => void;
   pauseSong: () => void;
   nextSong: () => void;
+  previousSong: () => void;
+  toggleShuffle: () => void;
+  toggleRepeat: () => void;
+  toggleRepeatLoop: () => void;
+  setVolume: (volume: number) => void;
+  seekTo: (time: number) => void;
+  seekForward: () => void;
+  seekBackward: () => void;
 }
 
 export const useMusic = create<MusicStore>((set, get) => ({
   currentSong: null,
   currentAlbum: null,
-  isPlaying: false,
   audio: null,
+  isPlaying: false,
+  isRepeat: localStorage.getItem("repeat") === "true",
+  isRepeatLoop: localStorage.getItem("repeatLoop") === "true",
+  isShuffle: localStorage.getItem("shuffle") === "true",
+  volume: parseFloat(localStorage.getItem("volume") ?? "1"),
 
   setCurrentSong(song, virtualAlbum) {
-    const { audio, pauseSong } = get();
+    const { audio, pauseSong, volume, isRepeat } = get();
 
-    // Pause and clean up existing audio
     if (audio) {
       pauseSong();
       audio.src = "";
       audio.onended = null;
     }
 
-    // Create new audio instance
     const newAudio = new Audio(song.audioUrl);
+    newAudio.volume = volume;
+    newAudio.loop = isRepeat;
+
     newAudio.onended = () => {
       get().nextSong();
     };
 
-    // Play the new song
     newAudio.play().catch((error) => {
-      console.error("Error playing audio:", error);
+      console.error("Playback failed:", error);
       set({ isPlaying: false });
     });
 
-    // Set the virtual album if provided, otherwise keep currentAlbum
     set({
       currentSong: song,
       currentAlbum: virtualAlbum ?? get().currentAlbum,
@@ -58,10 +73,7 @@ export const useMusic = create<MusicStore>((set, get) => ({
   playSong() {
     const { audio } = get();
     if (audio) {
-      audio.play().catch((error) => {
-        console.error("Error playing audio:", error);
-        set({ isPlaying: false });
-      });
+      audio.play().catch(() => set({ isPlaying: false }));
       set({ isPlaying: true });
     }
   },
@@ -75,7 +87,14 @@ export const useMusic = create<MusicStore>((set, get) => ({
   },
 
   nextSong() {
-    const { currentSong, currentAlbum, setCurrentSong, pauseSong } = get();
+    const {
+      currentSong,
+      currentAlbum,
+      setCurrentSong,
+      pauseSong,
+      isShuffle,
+      isRepeatLoop,
+    } = get();
     if (!currentAlbum || !currentSong) {
       pauseSong();
       return;
@@ -83,13 +102,91 @@ export const useMusic = create<MusicStore>((set, get) => ({
 
     const songs = currentAlbum.songs;
     const currentIndex = songs.findIndex((s) => s._id === currentSong._id);
-    const nextSong = songs[currentIndex + 1];
 
-    if (nextSong) {
-      setCurrentSong(nextSong);
+    let nextIndex;
+    if (isShuffle) {
+      do {
+        nextIndex = Math.floor(Math.random() * songs.length);
+      } while (nextIndex === currentIndex && songs.length > 1);
+    } else {
+      nextIndex = currentIndex + 1;
+    }
+
+    if (nextIndex < songs.length) {
+      setCurrentSong(songs[nextIndex]);
+    } else if (isRepeatLoop) {
+      setCurrentSong(songs[0]);
     } else {
       pauseSong();
       set({ currentSong: null, isPlaying: false });
+    }
+  },
+
+  previousSong() {
+    const { currentSong, currentAlbum, setCurrentSong, pauseSong , isRepeatLoop } = get();
+    if (!currentAlbum || !currentSong) {
+      pauseSong();
+      return;
+    }
+
+    const songs = currentAlbum.songs;
+    const currentIndex = songs.findIndex((s) => s._id === currentSong._id);
+    const previousIndex = currentIndex - 1;
+
+    if (previousIndex >= 0) {
+      setCurrentSong(songs[previousIndex]);
+    } else {
+      if (isRepeatLoop){
+        setCurrentSong(songs[songs.length - 1]);
+      }else{
+        pauseSong();
+        set({ currentSong: null, isPlaying: false });
+      }
+    }
+  },
+
+  toggleShuffle() {
+    const current = get().isShuffle;
+    localStorage.setItem("shuffle", String(!current));
+    set({ isShuffle: !current });
+  },
+
+  toggleRepeat() {
+    const current = get().isRepeat;
+    localStorage.setItem("repeat", String(!current));
+    const audio = get().audio;
+    if (audio) audio.loop = !current;
+    set({ isRepeat: !current });
+  },
+
+  toggleRepeatLoop() {
+    const current = get().isRepeatLoop;
+    localStorage.setItem("repeatLoop", String(!current));
+    set({ isRepeatLoop: !current });
+  },
+
+  setVolume(volume: number) {
+    localStorage.setItem("volume", volume.toString());
+    const audio = get().audio;
+    if (audio) audio.volume = volume;
+    set({ volume });
+  },
+
+  seekTo(time: number) {
+    const audio = get().audio;
+    if (audio) audio.currentTime = time;
+  },
+  seekForward() {
+    const audio = get().audio;
+    if (audio) {
+      audio.currentTime = Math.min(audio.currentTime + 10, audio.duration);
+    }
+  },
+
+  seekBackward() {
+    const audio = get().audio;
+    if (audio) {
+      audio.currentTime = Math.max(audio.currentTime - 10, 0);
     }
   },
 }));
