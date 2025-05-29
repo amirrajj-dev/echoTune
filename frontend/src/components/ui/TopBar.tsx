@@ -36,7 +36,7 @@ const TopBar = () => {
   if (isLoading) {
     return (
       <motion.div
-        className="sticky top-4 z-50 bg-base-100/60 backdrop-blur-lg rounded-t-xl shadow-xl px-6 py-4 mx-auto max-w-6xl flex items-center justify-between border border-white/10 animate-pulse"
+        className="z-50 bg-base-100/60 backdrop-blur-lg rounded-t-xl shadow-xl px-6 py-4 mx-auto max-w-6xl flex items-center justify-between border border-white/10 animate-pulse"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
@@ -58,7 +58,7 @@ const TopBar = () => {
         <input id="topbar-drawer" type="checkbox" className="drawer-toggle" />
 
         <motion.div
-          className="drawer-content w-full sticky top-4 bg-base-100/60 backdrop-blur-lg border border-white/10 shadow-xl px-6 py-4 mx-auto max-w-6xl rounded-xl flex flex-wrap items-center justify-between z-[900]"
+          className="drawer-content w-full bg-base-100/60 backdrop-blur-lg border border-white/10 shadow-xl px-6 py-4 mx-auto max-w-6xl rounded-xl flex flex-wrap items-center justify-between z-[900]"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
@@ -150,12 +150,12 @@ const TopBar = () => {
         </motion.div>
 
         {/* Drawer side content */}
-        <div className="drawer-side z-40">
+        <div className="drawer-side z-[910]">
           <label
             htmlFor="topbar-drawer"
-            className="drawer-overlay z-30"
+            className="drawer-overlay z-[900]"
           ></label>
-          <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content gap-2">
+          <ul className="menu z-[920] p-4 w-80 min-h-full bg-base-200 text-base-content gap-2">
             <li>
               <button className="btn btn-ghost justify-start gap-2 text-rose-500">
                 <Heart className="w-5 h-5" /> Favorites
