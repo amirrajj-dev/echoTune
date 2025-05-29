@@ -1,3 +1,4 @@
+import MusicPlayer from "../../components/shared/MusicPlayer";
 import FeaturedSongs from "./ui/FeaturedSongs";
 import MadeForYouSongs from "./ui/MadeForYouSongs";
 import TrendingSongs from "./ui/TrendingSongs";
@@ -9,6 +10,7 @@ const HomePage = () => {
       <FeaturedSongs/>
       <MadeForYouSongs/>
       <TrendingSongs/>
+      <MusicPlayer/>
     </div>
   );
 };
