@@ -20,7 +20,7 @@ const containerVariants = {
 };
 
 const MadeForYouSongs = () => {
-  const { currentSong, setCurrentSong, isPlaying, playSong, pauseSong } =
+  const { currentSong, setCurrentSong, isPlaying, playSong, pauseSong , setIsShowMusicPlayer } =
     useMusic();
   const { data: madeForYouSongs = [], isLoading } = useQuery({
     queryKey: ["madeForYouSongs"],
@@ -33,6 +33,7 @@ const MadeForYouSongs = () => {
     staleTime: 1000 * 60 * 60, // 1 hour
   });
   const handlePlayPause = (song: ISong) => {
+    setIsShowMusicPlayer(true)
     if (currentSong?._id === song._id && isPlaying) {
       pauseSong();
     } else if (currentSong?._id === song._id && !isPlaying) {

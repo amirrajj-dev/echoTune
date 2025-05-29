@@ -10,6 +10,7 @@ interface MusicStore {
   isRepeatLoop: boolean;
   isShuffle: boolean;
   volume: number;
+  isShowMusicPlayer : boolean
 
   setCurrentSong: (song: ISong, virtualAlbum?: IAlbum) => void;
   setCurrentAlbum: (album: IAlbum) => void;
@@ -24,6 +25,7 @@ interface MusicStore {
   seekTo: (time: number) => void;
   seekForward: () => void;
   seekBackward: () => void;
+  setIsShowMusicPlayer : (value : boolean)=>void
 }
 
 export const useMusic = create<MusicStore>((set, get) => ({
@@ -35,6 +37,7 @@ export const useMusic = create<MusicStore>((set, get) => ({
   isRepeatLoop: localStorage.getItem("repeatLoop") === "true",
   isShuffle: localStorage.getItem("shuffle") === "true",
   volume: parseFloat(localStorage.getItem("volume") ?? "1"),
+  isShowMusicPlayer : false,
 
   setCurrentSong(song, virtualAlbum) {
     const { audio, pauseSong, volume, isRepeat } = get();
@@ -188,5 +191,8 @@ export const useMusic = create<MusicStore>((set, get) => ({
     if (audio) {
       audio.currentTime = Math.max(audio.currentTime - 10, 0);
     }
+  },
+  setIsShowMusicPlayer(value) {
+    set({isShowMusicPlayer : value})
   },
 }));

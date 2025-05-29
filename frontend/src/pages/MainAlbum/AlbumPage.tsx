@@ -36,6 +36,7 @@ const AlbumPage = () => {
     isPlaying,
     playSong,
     pauseSong,
+    setIsShowMusicPlayer
   } = useMusic();
 
   useEffect(() => {
@@ -48,6 +49,7 @@ const AlbumPage = () => {
 
   const handlePlayPauseAlbum = () => {
     if (album && album.songs.length > 0 && !isPlaying) {
+      setIsShowMusicPlayer(true)
       if (currentSong) {
         playSong();
       } else {
@@ -62,7 +64,7 @@ const AlbumPage = () => {
   const handlePlaySong = (songId: string) => {
     const song = album?.songs.find((s) => s._id === songId);
     if (!song) return;
-
+    setIsShowMusicPlayer(true)
     if (currentSong?._id === song._id) {
       if (isPlaying) {
         pauseSong();

@@ -3,11 +3,12 @@ import Logo from "./Logo";
 import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/clerk-react";
 import SignInWithGoogleBtn from "./SignInWithGoogleBtn";
 import { motion } from "framer-motion";
-import { Heart, LayoutDashboard, Menu } from "lucide-react";
+import { Heart, LayoutDashboard, Menu, Music2 } from "lucide-react";
 import ThemePallette from "./theme/ThemePallette";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../configs/axios";
 import { useEffect } from "react";
+import { useMusic } from "../../store/music.store";
 
 interface IsAdminResponse {
   success: boolean;
@@ -15,6 +16,7 @@ interface IsAdminResponse {
 
 const TopBar = () => {
   const { isSignedIn } = useAuth();
+  const { isShowMusicPlayer, setIsShowMusicPlayer, currentSong } = useMusic();
   const { data: isAdmin, isLoading } = useQuery({
     queryKey: ["isAdmin"],
     queryFn: async () => {
@@ -99,6 +101,17 @@ const TopBar = () => {
             >
               <ThemePallette />
             </motion.div>
+            {currentSong && (
+              <motion.button
+              onClick={()=>setIsShowMusicPlayer(!isShowMusicPlayer)}
+                className="btn btn-success tooltip tooltip-left btn-soft btn-circle"
+                whileHover={{rotate : -20}}
+                transition={{ duration: 0.2 , ease: "easeOut" }}
+                data-tip={isShowMusicPlayer ? "Hide Music player" : "Show Music player"}
+              >
+                <Music2 />
+              </motion.button>
+            )}
 
             {isAdmin && (
               <motion.div
@@ -163,6 +176,17 @@ const TopBar = () => {
             </li>
             <li>
               <ThemePallette />
+            </li>
+            <li>
+            {currentSong && (
+              <motion.button
+              onClick={()=>setIsShowMusicPlayer(!isShowMusicPlayer)}
+                className="btn btn-success tooltip tooltip-right btn-soft btn-circle rotate-360"
+                data-tip={isShowMusicPlayer ? "Hide Music player" : "Show Music player"}
+              >
+                <Music2 />
+              </motion.button>
+            )}
             </li>
             {isAdmin && (
               <li>

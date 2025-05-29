@@ -20,7 +20,7 @@ const containerVariants = {
 };
 
 const TrendingSongs = () => {
-  const { currentSong, setCurrentSong, isPlaying, playSong, pauseSong } =
+  const { currentSong, setCurrentSong, isPlaying, playSong, pauseSong , setIsShowMusicPlayer } =
     useMusic();
   const { data: trendingSongs = [], isLoading } = useQuery({
     queryKey: ["trendingSongs"],
@@ -34,6 +34,7 @@ const TrendingSongs = () => {
   });
 
    const handlePlayPause = (song: ISong) => {
+    setIsShowMusicPlayer(true)
       if (currentSong?._id === song._id && isPlaying) {
         pauseSong();
       } else if (currentSong?._id === song._id && !isPlaying) {

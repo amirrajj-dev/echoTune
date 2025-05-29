@@ -38,6 +38,7 @@ const MusicPlayer = () => {
     seekTo,
     seekBackward,
     seekForward,
+    isShowMusicPlayer
   } = useMusic();
 
   const [currentTime, setCurrentTime] = useState(0);
@@ -105,7 +106,7 @@ const MusicPlayer = () => {
 
   return (
     <AnimatePresence>
-      {currentSong && (
+      {currentSong && isShowMusicPlayer && (
         <motion.div
           initial={{ y: "100%", opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

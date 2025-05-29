@@ -33,6 +33,7 @@ const FeaturedSongs = () => {
     isPlaying,
     playSong,
     pauseSong,
+    setIsShowMusicPlayer
   } = useMusic();
   const { data: featuredSongs = [], isLoading } = useQuery({
     queryKey: ["featuredSongs"],
@@ -46,6 +47,7 @@ const FeaturedSongs = () => {
   });
 
   const handlePlayPause = (song: ISong) => {
+    setIsShowMusicPlayer(true)
     if (currentSong?._id === song._id && isPlaying) {
       pauseSong();
     } else if (currentSong?._id === song._id && !isPlaying) {
