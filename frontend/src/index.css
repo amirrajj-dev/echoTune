@@ -3,3 +3,9 @@
 @plugin "daisyui"{
   themes: light --default, dark --prefersdark , forest , halloween , retro , emerald , night;
 }
+
+@layer base {
+  html {
+    @apply scroll-smooth
+  }
+}

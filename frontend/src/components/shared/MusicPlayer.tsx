@@ -239,7 +239,6 @@ const MusicPlayer = () => {
                 <motion.button
                   whileHover={{ scale: 1.1, rotate: 10 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={toggleShuffle}
                   className={`p-2 tooltip rounded-full transition-colors cursor-pointer`}
                   data-tip={"Add To Favourite"}
                 >
