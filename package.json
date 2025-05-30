@@ -14,6 +14,7 @@
     "helmet": "^8.1.0",
     "mongoose": "^8.15.0",
     "morgan": "^1.10.0",
+    "node-cron": "^4.0.7",
     "socket.io": "^4.8.1"
   },
   "scripts": {
@@ -22,7 +23,7 @@
     "dev": "nodemon --watch ./backend/src --exec ts-node ./backend/src/app.ts",
     "prestart": "npm run build",
     "seed:songs": "ts-node ./backend/src/seeds/songs.ts",
-    "seed:albums" : "ts-node ./backend/src/seeds/albums.ts"
+    "seed:albums": "ts-node ./backend/src/seeds/albums.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.2",

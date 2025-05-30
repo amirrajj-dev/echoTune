@@ -17,6 +17,10 @@ import { connectToDb } from './db/connectToDb';
 import errorMiddleware from './middlewares/error.middleware';
 import {clerkMiddleware} from '@clerk/express'
 import path from 'path';
+import fs from 'fs'
+//cron 
+import cron from 'node-cron'
+import { tmpdir } from 'os';
 
 dotenv.config();;
 
@@ -41,6 +45,23 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true
 }));
+
+const tmpDir = path.join(__dirname, 'temp')
+// Delete files in tmpDir every day
+cron.schedule("0 * * * *" , ()=>{
+    fs.readdir(tmpDir, (err, files) => {
+        if (err) {
+            throw err;
+        }
+        files.forEach(file => {
+            fs.unlink(path.join(tmpDir, file), err => {
+                if (err) {
+                    throw err;
+                }
+            });
+        });
+    });
+})
 
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
