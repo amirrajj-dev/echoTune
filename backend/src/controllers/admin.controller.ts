@@ -69,13 +69,13 @@ export const deleteSong = async (
     if (!song) {
       return res.status(404).json({ message: "Song not found." });
     }
-    if (song.ablumId) {
+    if (song.albumId) {
       await albumsModel.findByIdAndUpdate(song.albumId, {
         $pull: { songs: song._id },
       });
     }
-    if (song.audioPublicId) await deleteFromCloudinary(song.audioPublicId);
-    if (song.imagePublicId) await deleteFromCloudinary(song.imagePublicId);
+    if (song.audioPublicId) await deleteFromCloudinary(song.audioPublicId , 'video');
+    if (song.imagePublicId) await deleteFromCloudinary(song.imagePublicId , 'image');
     await songsModel.findByIdAndDelete(id);
     return res.status(200).json({
       message: "Song deleted successfully",
@@ -89,9 +89,9 @@ export const deleteSong = async (
 
 export const createAlbum = async (req : Request , res : Response , next : NextFunction)=>{
     try{
-        const {title , artist , release_year} = req.body
+        const {title , artist , releaseYear} = req.body
         const imageFile = req.files?.imageFile;
-        if(!title || !artist || !release_year){
+        if(!title || !artist || !releaseYear){
             return res.status(400).json({message : "All fields are required."})
         }
         if(!imageFile){
@@ -101,7 +101,7 @@ export const createAlbum = async (req : Request , res : Response , next : NextFu
         const album = new albumsModel({
             title,
             artist,
-            release_year,
+            releaseYear,
             imageUrl: imageUpload.secure_url,
             imagePublicId: imageUpload.public_id
         });
@@ -128,8 +128,15 @@ export const deleteAlbum = async (req : Request , res : Response , next : NextFu
         if (!album) {
             return res.status(404).json({ message: "Album not found." });
         }
-        if (album.imagePublicId) await deleteFromCloudinary(album.imagePublicId);
+        if (album.imagePublicId) await deleteFromCloudinary(album.imagePublicId , 'image');
         await albumsModel.findByIdAndDelete(id);
+        if (album.songs.length > 0) {
+          // delelte songs audio and image from cloudinary
+          for (const song of album.songs) {
+            if (song.audioPublicId) await deleteFromCloudinary(song.audioPublicId , 'video');
+            if (song.imagePublicId) await deleteFromCloudinary(song.imagePublicId , 'image');
+          }
+        }
         // Delete all songs associated with this album
         await songsModel.deleteMany({ albumId: id });
         return res.status(200).json({

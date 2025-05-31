@@ -15,7 +15,8 @@ declare global {
 export const protectRoute = async (req: Request, res: Response, next: any) => {
   const {userId} = getAuth(req)
   const user : any = await usersModel.find({clerkId : userId} , '_id').exec();
-  if (!user) {
+
+  if (!user || !userId) {
     return res.status(401).json({ message: "Unauthorized you are not logged in" , success : false });
   }
   req.auth.userId = user[0]?._id ;

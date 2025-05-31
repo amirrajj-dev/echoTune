@@ -10,7 +10,7 @@ router.use(protectRoute as express.RequestHandler , requireAdmin as express.Requ
 router.post('/songs' , creatSong as express.RequestHandler);
 router.delete('/songs/:id' , deleteSong as express.RequestHandler);
 router.post('/albums' , createAlbum as express.RequestHandler);
-router.post('/albums/:id', deleteAlbum as express.RequestHandler);
+router.delete('/albums/:id', deleteAlbum as express.RequestHandler);
 
 router.get('/check-admin'  , catchAsync(checkAdmin));
 

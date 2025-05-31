@@ -14,22 +14,8 @@ export const getStats = async (
       albumsModel.countDocuments(),
       usersModel.countDocuments(),
     ]);
-    const uniqueArtists = await songsModel.aggregate([
-        {
-            $unionWith : {
-                coll: 'albums',
-                pipeline: []
-            }
-        },
-        {
-            $group : {
-                _id : "artists"
-            }
-        },
-        {
-            $count : "count"
-        }
-    ])
+    const uniqueArtists = await songsModel.distinct("artist");
+    const uniqueArtistCount = uniqueArtists.length;
     return res.status(200).json({
         message : "Stats fetched successfully",
         success : true,
@@ -37,7 +23,7 @@ export const getStats = async (
             totalSongs,
             totalAlbums,
             totalUsers,
-            uniqueArtists : uniqueArtists[0].count
+            uniqueArtists : uniqueArtistCount
         }
     })
   } catch (error) {

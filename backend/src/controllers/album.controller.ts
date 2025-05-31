@@ -6,7 +6,7 @@ export const getAlbums = async (
   next: NextFunction
 ) => {
   try {
-    const albums = await albumsModel.find();
+    const albums = await albumsModel.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       data: albums,
