@@ -12,7 +12,7 @@ const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: false,
     },
   },
 });
@@ -24,14 +24,14 @@ if (!PUBLISHABLE_KEY) {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl={"/"}>
-      <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <BrowserRouter>
-          <AuthProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <BrowserRouter>
             <App />
-          </AuthProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
+          </BrowserRouter>
+        </QueryClientProvider>
+      </AuthProvider>
     </ClerkProvider>
   </StrictMode>
 );

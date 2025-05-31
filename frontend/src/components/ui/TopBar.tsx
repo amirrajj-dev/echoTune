@@ -5,34 +5,20 @@ import SignInWithGoogleBtn from "./SignInWithGoogleBtn";
 import { motion } from "framer-motion";
 import { Heart, LayoutDashboard, Menu, Music2 } from "lucide-react";
 import ThemePallette from "./theme/ThemePallette";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "../../configs/axios";
 import { useEffect } from "react";
 import { useMusic } from "../../store/music.store";
-
-interface IsAdminResponse {
-  success: boolean;
-}
+import { useAuthStore } from "../../store/auth.store";
+import { useQueryClient } from "@tanstack/react-query";
 
 const TopBar = () => {
   const { isSignedIn } = useAuth();
   const { isShowMusicPlayer, setIsShowMusicPlayer, currentSong } = useMusic();
-  const { data: isAdmin, isLoading } = useQuery({
-    queryKey: ["isAdmin"],
-    queryFn: async () => {
-      const res = await axiosInstance.get<IsAdminResponse>(
-        "/admin/check-admin"
-      );
-      return res.data.success;
-    },
-    staleTime: 1000 * 60 * 5,
-  });
+ const {isLoading , isAdmin} = useAuthStore();
 
   const queryClient = useQueryClient();
   useEffect(() => {
     if (isSignedIn) return;
     queryClient.removeQueries({ queryKey: ["friends"] });
-    queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
   }, [isSignedIn, queryClient]);
 
   if (isLoading) {
@@ -104,12 +90,12 @@ const TopBar = () => {
             {currentSong && (
               <motion.button
               onClick={()=>setIsShowMusicPlayer(!isShowMusicPlayer)}
-                className="btn btn-success tooltip tooltip-left btn-soft btn-circle"
+                className="btn btn-success tooltip tooltip-left btn-sm btn-soft btn-circle"
                 whileHover={{rotate : -20}}
                 transition={{ duration: 0.2 , ease: "easeOut" }}
                 data-tip={isShowMusicPlayer ? "Hide Music player" : "Show Music player"}
               >
-                <Music2 />
+                <Music2 size={16} />
               </motion.button>
             )}
 

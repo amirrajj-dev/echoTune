@@ -4,17 +4,16 @@ import { axiosInstance } from "../configs/axios";
 import { motion } from "framer-motion";
 import { Music3 } from "lucide-react";
 import { useTheme } from "../store/theme.store";
+import { useAuthStore } from "../store/auth.store";
 
 const updateApiToken = (token: string | null) => {
-  if (token) {
-    axiosInstance.defaults.headers["Authorization"] = `Bearer ${token}`;
-  } else {
-    delete axiosInstance.defaults.headers["Authorization"];
-  }
+	if (token) axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+	else delete axiosInstance.defaults.headers.common["Authorization"];
 };
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { getToken } = useAuth();
+  const {checkAdminStatus} = useAuthStore();
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
 
@@ -24,6 +23,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const token = await getToken();
         updateApiToken(token);
+        if (token){
+          await checkAdminStatus();
+        }
       } catch (error) {
         updateApiToken(null);
         console.error("Auth error:", error);
@@ -32,7 +34,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
     initAuth();
-  }, [getToken]);
+  }, [getToken , checkAdminStatus]);
 
   if (loading) {
     return (

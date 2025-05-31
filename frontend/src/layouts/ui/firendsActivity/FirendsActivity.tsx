@@ -1,25 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Users, Music2, PauseCircle } from "lucide-react";
-import { axiosInstance } from "../../../configs/axios";
-import type { IUser } from "../../../interfaces/interfaces";
 import { useUser } from "@clerk/clerk-react";
 import SignInWithGoogleBtn from "../../../components/ui/SignInWithGoogleBtn";
-
-interface FirendsResponse {
-  data: IUser[];
-}
+import { useFriends } from "../../../hooks/firend.hook";
 
 const FirendsActivity = () => {
   const { isSignedIn } = useUser();
-  const { data: friends, isLoading } = useQuery({
-    queryKey: ["friends"],
-    enabled: isSignedIn,
-    queryFn: async () => {
-      const { data } = await axiosInstance.get<FirendsResponse>("/users");
-      return data.data;
-    },
-  });
+  const { data: friends, isLoading } = useFriends()
 
   if (!isSignedIn) {
     return (
