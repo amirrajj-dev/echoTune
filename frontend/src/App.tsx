@@ -9,6 +9,7 @@ import ChatPage from "./pages/chat/ChatPage";
 import AlbumPage from "./pages/MainAlbum/AlbumPage";
 import AdminDashboard from "./pages/admin-dashboard/AdminDashboard";
 import { Toaster } from "sonner";
+import NotFound from "./pages/notfound/NotFound";
 
 const App = () => {
   const { theme, initializeTheme } = useTheme();
@@ -36,6 +37,7 @@ const App = () => {
           }
         />
       <Route path="/admin-dashboard" element={<AdminDashboard/>} />
+      <Route path="*" element={<NotFound/>} />
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/chat" element={<ChatPage />} />
