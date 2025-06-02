@@ -25,10 +25,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(true);
       try {
         const token = await getToken();
-        if (!token){
-          toast.error("You are not logged in");
-          return
-        }
+        if (!token) return
+        
         updateApiToken(token);
         if (token && userId) {
           await checkAdminStatus();

@@ -74,15 +74,17 @@ const TopBar = () => {
               },
             }}
           >
-            <Link to={'/favourites'}>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn btn-circle bg-transparent border-none shadow-none transition"
-              >
-                <Heart className="w-5 h-5" />
-              </motion.button>
-            </Link>
+            {isSignedIn && (
+              <Link to={"/favourites"}>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="btn btn-circle bg-transparent border-none shadow-none transition"
+                >
+                  <Heart className="w-5 h-5" />
+                </motion.button>
+              </Link>
+            )}
 
             <motion.div
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
@@ -159,11 +161,13 @@ const TopBar = () => {
             className="drawer-overlay z-[900]"
           ></label>
           <ul className="menu z-[920] p-4 w-80 min-h-full bg-base-200 text-base-content gap-2">
-            <li>
-              <button className="btn btn-ghost justify-start gap-2 text-rose-500">
-                <Heart className="w-5 h-5" /> Favorites
-              </button>
-            </li>
+            {isSignedIn && (
+              <li>
+                <button className="btn btn-ghost justify-start gap-2 text-rose-500">
+                  <Heart className="w-5 h-5" /> Favorites
+                </button>
+              </li>
+            )}
             <li>
               <ThemePallette />
             </li>

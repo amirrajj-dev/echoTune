@@ -4,9 +4,13 @@ import { motion } from "framer-motion";
 import Sidebar from "./ui/sidebar/Sidebar";
 import { Menu } from "lucide-react";
 import { useEffect } from "react";
+import { useAuth } from "@clerk/clerk-react";
+import SignInWithGoogleBtn from "../../components/ui/SignInWithGoogleBtn";
+import Logo from "../../components/ui/Logo";
 
 const ChatPage = () => {
   const { isSidebarOpen, setIsSidebarOpen, toggleSidebar } = useSidebar();
+  const { isSignedIn } = useAuth();
   useEffect(() => {
     return () => {
       if (window.innerWidth < 768) {
@@ -23,6 +27,28 @@ const ChatPage = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [setIsSidebarOpen]);
+
+  if (!isSignedIn) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex h-[80vh] bg-base-100/70 backdrop-blur-md rounded-xl shadow-2xl border border-white/10 p-4 sm:p-6 relative overflow-hidden items-center justify-center"
+      >
+        <div className="z-10 flex flex-col items-center text-center gap-4">
+          <Logo />
+          <h2 className="text-2xl font-bold text-base-content">
+            You’re not signed in
+          </h2>
+          <p className="text-sm text-base-content/80 max-w-xs">
+            Please sign in to access your chats and continue the conversation.
+          </p>
+          <SignInWithGoogleBtn />
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

@@ -20,7 +20,7 @@ const FirendsActivity = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-base-100/60 w-full md:w-auto backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-xl max-w-md mx-auto md:mx-0"
+        className="bg-base-100/60 w-full md:w-auto backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-xl"
       >
         <div className="text-center space-y-4">
           <motion.div

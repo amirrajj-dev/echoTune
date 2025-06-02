@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/home/HomePage";
 import AuthCallbackPage from "./pages/authCallBack/AuthCallbackPage";
-import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
+import { AuthenticateWithRedirectCallback, useAuth } from "@clerk/clerk-react";
 import MainLayout from "./layouts/MainLayout";
 import { useTheme } from "./store/theme.store";
 import { useEffect } from "react";
@@ -11,9 +11,12 @@ import AdminDashboard from "./pages/admin-dashboard/AdminDashboard";
 import { Toaster } from "sonner";
 import NotFound from "./pages/notfound/NotFound";
 import FavouritesPage from "./pages/favourites/FavouritesPage";
+import { useAuthStore } from "./store/auth.store";
 
 const App = () => {
   const { theme, initializeTheme } = useTheme();
+  const {isSignedIn} = useAuth()
+  const {isAdmin} = useAuthStore()
   useEffect(() => {
     initializeTheme();
   }, [initializeTheme]);
@@ -28,7 +31,7 @@ const App = () => {
       }`}
     >
       <Routes>
-        <Route path="/auth-callback" element={<AuthCallbackPage />} />
+        <Route path="/auth-callback" element={<AuthCallbackPage/>} />
         <Route
           path="/sso-callback"
           element={
@@ -37,8 +40,8 @@ const App = () => {
             />
           }
         />
-      <Route path="/admin-dashboard" element={<AdminDashboard/>} />
-      <Route path="/favourites" element={<FavouritesPage/>} />
+      <Route path="/admin-dashboard" element={isSignedIn && isAdmin ? <AdminDashboard/> : <NotFound/>} />
+      <Route path="/favourites" element={isSignedIn ? <FavouritesPage/> : <NotFound/>} />
       <Route path="*" element={<NotFound/>} />
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
