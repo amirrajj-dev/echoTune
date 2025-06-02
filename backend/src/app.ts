@@ -20,11 +20,17 @@ import path from 'path';
 import fs from 'fs'
 //cron 
 import cron from 'node-cron'
+import { createServer } from 'http';
+import { initializeSocket } from './socket/socket';
 
 dotenv.config();;
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+const httpServer = createServer(app)
+
+initializeSocket(httpServer)
 
 app.use(express.json());
 app.use(clerkMiddleware()) // add auth to request object make req.auth available
@@ -70,7 +76,7 @@ app.use('/api/stats', statRoutes);
 
 app.use(errorMiddleware)
 
-app.listen(port , async () => {
+httpServer.listen(port , async () => {
   await connectToDb();
   console.log(`Server running on http://localhost:${port}`);
 });
