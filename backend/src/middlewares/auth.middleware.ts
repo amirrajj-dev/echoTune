@@ -7,26 +7,23 @@ declare global {
     export interface Request {
         auth: {
             userId?: string;
-            clerkId : string
         };
     }
   }
 }
 export const protectRoute = async (req: Request, res: Response, next: any) => {
+  console.log('userId => ' , req.auth.userId);
   const {userId} = getAuth(req)
-  const user : any = await usersModel.find({clerkId : userId} , '_id').exec();
-
-  if (!user || !userId) {
-    return res.status(401).json({ message: "Unauthorized you are not logged in" , success : false });
+  console.log('userId => ' , userId);
+  if (!req.auth.userId){
+    return res.status(401).json({ message: "Unauthorized you are not logged in" });
   }
-  req.auth.userId = user[0]?._id ;
-  req.auth.clerkId = userId as string
   next();
 };
 
 export const requireAdmin = async (req: Request, res: Response, next: any) => {
     try {
-        const currentUser = await clerkClient.users.getUser(req.auth.clerkId as string);
+        const currentUser = await clerkClient.users.getUser(req.auth.userId as string);
         const isAdmin = process.env.ADMIN_EMAIL === currentUser.primaryEmailAddress?.emailAddress
         if (!isAdmin) {
             return res.status(403).json({ message: "Forbidden you are not an admin", success: false });

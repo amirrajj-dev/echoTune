@@ -1,11 +1,12 @@
 import { NextFunction , Request , Response } from "express";
 import { usersModel } from "../models/user.model";
 import { messagesModel } from "../models/message.model";
+import { getAuth } from "@clerk/express";
 
 export const getUsers = async (req : Request , res : Response, next : NextFunction)=>{
     try {
         const currentUserId = req.auth.userId
-        const users = await  usersModel.find({_id : {$ne : currentUserId}}).sort({createdAt : -1})
+        const users = await  usersModel.find({clerkId : {$ne : currentUserId}}).sort({createdAt : -1})
         return res.status(200).json({
             message : 'users fetched succesfully',
             success : true ,
@@ -16,7 +17,7 @@ export const getUsers = async (req : Request , res : Response, next : NextFuncti
     }
 }
 
-export const addSongToFavouriteSongs = async (req : Request , res : Response , next : NextFunction)=>{
+export const addToFavouriteSongs = async (req : Request , res : Response , next : NextFunction)=>{
     try {
         const {songId} = req.params
         if (!songId){
@@ -25,8 +26,8 @@ export const addSongToFavouriteSongs = async (req : Request , res : Response , n
                 success : false,
             }
         }
-        const currentUserId = req.auth.userId
-        const user = await usersModel.findById(currentUserId)
+        const currentUserClerkId = req.auth.userId
+        const user = await usersModel.findOne({clerkId : currentUserClerkId})
         if (!user){
             return {
                 message : "User Not Found",
@@ -59,7 +60,7 @@ export const addSongToFavouriteSongs = async (req : Request , res : Response , n
 export const getMessages = async (req : Request , res : Response , next : NextFunction)=>{
     try {
         const {id : receiverId} = req.params
-        const currentUserId = req.auth.clerkId
+        const {userId : currentUserId} = getAuth(req)
         const messages = await messagesModel.find({
             $or : [
                 { senderId: receiverId, receiverId: currentUserId },
@@ -70,6 +71,33 @@ export const getMessages = async (req : Request , res : Response , next : NextFu
             message : "Messages Fetched Successfully",
             success : true,
             data : messages
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getFavouriteSongs = async (req : Request , res : Response , next : NextFunction)=>{
+    try {
+        const userId = req.auth.userId
+        if (!userId){
+            return res.status(400).json({
+                message : "Id Is Required",
+                success : false
+            })
+        }
+        const user = await usersModel.findOne({clerkId : userId}).populate('favouriteSongs')
+        if (!user){
+            return res.status(404).json({
+                message : "User Not Found",
+                success : false
+            })
+        }
+
+        return res.status(200).json({
+            message : "Favourite Songs Fetched Successfully",
+            success : true,
+            data : user.favouriteSongs
         })
     } catch (error) {
         next(error)
