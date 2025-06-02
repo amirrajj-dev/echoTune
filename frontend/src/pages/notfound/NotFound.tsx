@@ -67,6 +67,15 @@ const NotFound = () => {
           <span className="relative z-10">Take me home</span>
           <div className="absolute inset-0 z-0 before:content-[''] before:absolute before:inset-0 before:bg-white/10 before:animate-[shimmer_2s_infinite] before:-skew-x-12" />
         </motion.button>
+        <motion.button
+          onClick={() => navigate(-1)}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          className="btn btn-wide relative overflow-hidden bg-gradient-to-tr from-primary to-accent text-white"
+        >
+          <span className="relative z-10">Go Back</span>
+          <div className="absolute inset-0 z-0 before:content-[''] before:absolute before:inset-0 before:bg-white/10 before:animate-[shimmer_2s_infinite] before:-skew-x-12" />
+        </motion.button>
       </motion.div>
     </div>
   );
