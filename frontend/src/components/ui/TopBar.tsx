@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const TopBar = () => {
   const { isSignedIn } = useAuth();
   const { isShowMusicPlayer, setIsShowMusicPlayer, currentSong } = useMusic();
- const {isLoading , isAdmin} = useAuthStore();
+  const { isLoading, isAdmin } = useAuthStore();
 
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -74,13 +74,15 @@ const TopBar = () => {
               },
             }}
           >
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="btn btn-circle bg-transparent border-none shadow-none text-rose-500 hover:bg-rose-100 transition"
-            >
-              <Heart className="w-5 h-5" />
-            </motion.button>
+            <Link to={'/favourites'}>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="btn btn-circle bg-transparent border-none shadow-none transition"
+              >
+                <Heart className="w-5 h-5" />
+              </motion.button>
+            </Link>
 
             <motion.div
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
@@ -89,11 +91,13 @@ const TopBar = () => {
             </motion.div>
             {currentSong && (
               <motion.button
-              onClick={()=>setIsShowMusicPlayer(!isShowMusicPlayer)}
+                onClick={() => setIsShowMusicPlayer(!isShowMusicPlayer)}
                 className="btn btn-success tooltip tooltip-left btn-sm btn-soft btn-circle"
-                whileHover={{rotate : -20}}
-                transition={{ duration: 0.2 , ease: "easeOut" }}
-                data-tip={isShowMusicPlayer ? "Hide Music player" : "Show Music player"}
+                whileHover={{ rotate: -20 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                data-tip={
+                  isShowMusicPlayer ? "Hide Music player" : "Show Music player"
+                }
               >
                 <Music2 size={16} />
               </motion.button>
@@ -164,15 +168,19 @@ const TopBar = () => {
               <ThemePallette />
             </li>
             <li>
-            {currentSong && (
-              <motion.button
-              onClick={()=>setIsShowMusicPlayer(!isShowMusicPlayer)}
-                className="btn btn-success tooltip tooltip-right btn-soft btn-circle rotate-360"
-                data-tip={isShowMusicPlayer ? "Hide Music player" : "Show Music player"}
-              >
-                <Music2 />
-              </motion.button>
-            )}
+              {currentSong && (
+                <motion.button
+                  onClick={() => setIsShowMusicPlayer(!isShowMusicPlayer)}
+                  className="btn btn-success tooltip tooltip-right btn-soft btn-circle rotate-360"
+                  data-tip={
+                    isShowMusicPlayer
+                      ? "Hide Music player"
+                      : "Show Music player"
+                  }
+                >
+                  <Music2 />
+                </motion.button>
+              )}
             </li>
             {isAdmin && (
               <li>

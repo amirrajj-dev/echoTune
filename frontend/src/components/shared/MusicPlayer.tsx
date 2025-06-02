@@ -18,7 +18,11 @@ import {
 } from "lucide-react";
 import { useMusic } from "../../store/music.store";
 import { useChatStore } from "../../store/chat.store";
-import { useUser } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance } from "../../configs/axios";
+import { toast } from "sonner";
+import { useFavourites } from "../../hooks/favourite.hook";
 
 const MusicPlayer = () => {
   const {
@@ -41,18 +45,24 @@ const MusicPlayer = () => {
     seekBackward,
     seekForward,
     isShowMusicPlayer,
+    setIsShowMusicPlayer
   } = useMusic();
   const { socket } = useChatStore();
   const { user } = useUser();
-
+  const queryClient = useQueryClient();
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [buffered, setBuffered] = useState(0);
+  const { isSignedIn } = useAuth();
+  const { data: userFavouriteSongs } = useFavourites(
+    user?.id as string,
+    isSignedIn as boolean
+  );
+  const isInTheUserFavouriteSongs = userFavouriteSongs?.some(s=>s._id.includes(currentSong?._id as string))
 
-  const formatTime = (time: number) =>new Date(time * 1000).toISOString().substring(14, 19);
+  const formatTime = (time: number) =>
+    new Date(time * 1000).toISOString().substring(14, 19);
   useEffect(() => {
     if (!socket || !user?.id) return;
-    console.log(currentSong);
     if (isPlaying && currentSong) {
       socket.emit("update_activity", {
         userId: user.id,
@@ -73,30 +83,19 @@ const MusicPlayer = () => {
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleLoadedMetadata = () => {
       setDuration(audio.duration || 0);
-      setBuffered(audio.buffered?.end(0) || 0);
-    };
-    const handleProgress = () => {
-      if (audio.buffered.length > 0) {
-        setBuffered(audio.buffered.end(0));
-      }
-    };
+    };;
 
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
-    audio.addEventListener("progress", handleProgress);
 
-    // Initialize duration and buffered state if audio is already loaded
+    // Initialize duration
     if (audio.duration) {
       setDuration(audio.duration);
-      if (audio.buffered.length > 0) {
-        setBuffered(audio.buffered.end(0));
-      }
     }
 
     return () => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      audio.removeEventListener("progress", handleProgress);
     };
   }, [audio, currentSong]);
 
@@ -122,6 +121,27 @@ const MusicPlayer = () => {
     if (isRepeatLoop) return <Repeat className="w-4 h-4" />;
     return <Repeat className="w-4 h-4 opacity-50" />;
   };
+
+  const { mutate: AddToFavouriteSongs, isPending } = useMutation({
+    mutationFn: async (songId: string) => {
+      const { data } = await axiosInstance.put(`/users/favourites/${songId}`);
+      return data;
+    },
+    onSuccess: (res) => {
+      if (res.message === "Song Removed From Favourite Songs") {
+        toast.success("Song removed from favourites successfully");
+        setIsShowMusicPlayer(false);
+        pauseSong()
+      } else {
+        toast.success("Song added to favourites successfully");
+      }
+      queryClient.invalidateQueries({ queryKey: ["favourites"] });
+    },
+    onError: (e) => {
+      console.log(e);
+      toast.error(e.message || "Error adding song to favourites");
+    },
+  });
 
   return (
     <AnimatePresence>
@@ -258,8 +278,10 @@ const MusicPlayer = () => {
                 <motion.button
                   whileHover={{ scale: 1.1, rotate: 10 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`p-2 tooltip rounded-full transition-colors cursor-pointer`}
-                  data-tip={"Add To Favourite"}
+                  className={`p-2 tooltip rounded-full transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
+                  data-tip={isInTheUserFavouriteSongs ? "Remove From Favourites" : "Add To Favourites"}
+                  onClick={() => AddToFavouriteSongs(currentSong._id)}
+                  disabled={isPending}
                 >
                   <Heart className="w-4 h-4" />
                 </motion.button>

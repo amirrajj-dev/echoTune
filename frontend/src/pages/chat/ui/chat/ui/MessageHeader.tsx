@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { useChatStore } from "../../../../../store/chat.store";
 import { motion } from "framer-motion";
-import { useUser } from "@clerk/clerk-react";
 
 const MessageHeader = () => {
   const { socket, onlineUsers, selectedUser } = useChatStore();
   const [typing, setTyping] = useState(false);
-  const { user } = useUser();
-  const isOnline = onlineUsers.has(user?.id as string);
+  const isOnline = onlineUsers.has(selectedUser?.clerkId as string);
 
   useEffect(() => {
     if (socket && selectedUser?.clerkId) {

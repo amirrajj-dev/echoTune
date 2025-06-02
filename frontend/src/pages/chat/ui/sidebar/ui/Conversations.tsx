@@ -13,7 +13,7 @@ const Conversations = () => {
   const { data: conversations, isPending } = useFriends();
   const isSeachActive = filteredUsers().length > 0 && query.length > 0;
   const conversationsToShow = isSeachActive ? filteredUsers() : conversations;
-console.log(conversationsToShow);
+
   useEffect(() => {
     if (conversations && conversations?.length > 0) {
       setUsers(conversations);

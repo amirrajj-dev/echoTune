@@ -35,6 +35,7 @@ const MessageInput = () => {
         receiverId: selectedUser.clerkId,
         content,
       });
+      setMessage("");
     },
     onError: (err: Error) => {
       toast.error(err.message || "Failed to send message");

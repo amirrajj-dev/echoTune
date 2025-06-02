@@ -10,6 +10,7 @@ import AlbumPage from "./pages/MainAlbum/AlbumPage";
 import AdminDashboard from "./pages/admin-dashboard/AdminDashboard";
 import { Toaster } from "sonner";
 import NotFound from "./pages/notfound/NotFound";
+import FavouritesPage from "./pages/favourites/FavouritesPage";
 
 const App = () => {
   const { theme, initializeTheme } = useTheme();
@@ -18,7 +19,7 @@ const App = () => {
   }, [initializeTheme]);
   return (
     <div
-      className={`font-mono transition-all p-1 min-h-screen ${
+      className={`font-mono transition-all min-h-screen ${
         theme === "dark"
           ? "bg-base-300"
           : theme === "night"
@@ -37,6 +38,7 @@ const App = () => {
           }
         />
       <Route path="/admin-dashboard" element={<AdminDashboard/>} />
+      <Route path="/favourites" element={<FavouritesPage/>} />
       <Route path="*" element={<NotFound/>} />
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />

@@ -24,11 +24,11 @@ const NoChatSelected = () => {
         </div>
       </div>
 
-      <h1 className="text-4xl font-bold text-white drop-shadow-sm mb-3">
+      <h1 className="text-4xl font-bold text-base-content drop-shadow-sm mb-3">
         Welcome, <span className="text-primary">{user?.firstName}</span>
       </h1>
 
-      <p className="text-white/70 mb-8 text-sm sm:text-base leading-relaxed">
+      <p className="text-base-content/70 mb-8 text-sm sm:text-base leading-relaxed">
         {window.innerWidth >= 768 ? `
           Select a conversation on the left to start messaging. This area will
         update when you choose a chat.
