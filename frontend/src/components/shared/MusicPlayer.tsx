@@ -17,6 +17,8 @@ import {
   Heart,
 } from "lucide-react";
 import { useMusic } from "../../store/music.store";
+import { useChatStore } from "../../store/chat.store";
+import { useUser } from "@clerk/clerk-react";
 
 const MusicPlayer = () => {
   const {
@@ -38,15 +40,32 @@ const MusicPlayer = () => {
     seekTo,
     seekBackward,
     seekForward,
-    isShowMusicPlayer
+    isShowMusicPlayer,
   } = useMusic();
+  const { socket } = useChatStore();
+  const { user } = useUser();
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [buffered, setBuffered] = useState(0);
 
-  const formatTime = (time: number) =>
-    new Date(time * 1000).toISOString().substring(14, 19);
+  const formatTime = (time: number) =>new Date(time * 1000).toISOString().substring(14, 19);
+  useEffect(() => {
+    if (!socket || !user?.id) return;
+    console.log(currentSong);
+    if (isPlaying && currentSong) {
+      socket.emit("update_activity", {
+        userId: user.id,
+        activity: "Listening",
+        song: { name: currentSong.title, artist: currentSong.artist },
+      });
+    } else {
+      socket.emit("update_activity", {
+        userId: user.id,
+        activity: "Idle",
+      });
+    }
+  }, [isPlaying, currentSong, socket, user?.id]);
 
   useEffect(() => {
     if (!audio) return;

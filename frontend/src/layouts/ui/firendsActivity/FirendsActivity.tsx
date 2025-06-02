@@ -3,10 +3,17 @@ import { Users, Music2, PauseCircle } from "lucide-react";
 import { useUser } from "@clerk/clerk-react";
 import SignInWithGoogleBtn from "../../../components/ui/SignInWithGoogleBtn";
 import { useFriends } from "../../../hooks/firend.hook";
+import { useChatStore } from "../../../store/chat.store";
+
+interface IActivity {
+  activity: "Listening" | "Idle";
+  song?: { name: string; artist: string };
+}
 
 const FirendsActivity = () => {
   const { isSignedIn } = useUser();
-  const { data: friends, isLoading } = useFriends()
+  const { data: friends, isLoading } = useFriends();
+  const { onlineUsers, userActivities } = useChatStore();
 
   if (!isSignedIn) {
     return (
@@ -40,8 +47,6 @@ const FirendsActivity = () => {
     );
   }
 
-  const isOnline = false;
-  const isListening = false;
   return (
     <div className="bg-base-100/60 backdrop-blur-lg rounded-lg p-4 shadow-xl border border-white/10">
       <div className="flex flex-col bg-base-300 p-4 rounded-md">
@@ -77,7 +82,7 @@ const FirendsActivity = () => {
           >
             <div className="flex flex-col items-center justify-center gap-2">
               <div className="bg-gradient-to-br from-primary to-secondary p-2 rounded-full flex items-center justify-center">
-              <Music2 size={22} />
+                <Music2 size={22} />
               </div>
               <p>No friend activity yet.</p>
               <p className="text-xs text-base-content/60">
@@ -85,46 +90,67 @@ const FirendsActivity = () => {
               </p>
             </div>
           </motion.div>
-        ) : null}
+        ) : (
+          <div className="flex flex-col gap-3">
+            {friends?.map((friend) => {
+              const isFriendOnline = friend.clerkId ? onlineUsers.has(friend.clerkId) : false;
+              const activity = friend.clerkId ? userActivities.get(friend.clerkId) : { activity: "Idle" } as IActivity; ;
+              const isListening = activity?.activity === "Listening";
 
-        <div className="flex flex-col gap-3">
-          {friends?.map((friend) => (
-            <motion.div
-              key={friend._id}
-              className="flex items-start gap-3 p-3 rounded-lg hover:bg-base-200/60 transition-colors relative"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="relative w-10 h-10 shrink-0">
-                <img
-                  src={friend.imageUrl}
-                  alt={friend.fullName}
-                  className="w-10 h-10 rounded-full object-cover border border-white/10"
-                />
-                {isOnline ? (
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
-                ) : (
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-gray-400 ring-2 ring-white" />
-                )}
-              </div>
+              return (
+                <motion.div
+                  key={friend._id}
+                  className="flex items-start gap-3 p-3 rounded-lg hover:bg-base-200/60 transition-colors relative"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="relative w-10 h-10 shrink-0">
+                    <img
+                      src={friend.imageUrl}
+                      alt={friend.fullName}
+                      className="w-10 h-10 rounded-full object-cover border border-white/10"
+                    />
+                    <span
+                      className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-white ${
+                        isFriendOnline ? "bg-emerald-500" : "bg-gray-400"
+                      }`}
+                    />
+                  </div>
 
-              <div className="flex flex-col">
-                <span className="font-medium text-base">{friend.fullName}</span>
-                {isListening ? (
-                  <span className="text-sm text-white/80 flex items-center gap-1">
-                    <Music2 size={14} className="text-primary" />
-                    <span>song name — song artist</span>
-                  </span>
-                ) : (
-                  <span className="text-sm text-gray-400 flex items-center gap-1">
-                    <PauseCircle size={14} />
-                    Idle
-                  </span>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                  <div className="flex flex-col">
+                    <span className="font-medium text-base">{friend.fullName}</span>
+                    <motion.span
+                      key={activity?.activity} // Key ensures animation on activity change
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className={`text-sm flex items-center gap-1 ${
+                        isListening ? "text-white/80" : "text-gray-400"
+                      }`}
+                    >
+                      {isListening ? (
+                        <>
+                          <Music2 size={14} className="text-primary" />
+                          <span>
+                            {activity?.song
+                              ? `${activity?.song.name} — ${activity?.song.artist}`
+                              : "Listening to music"}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <PauseCircle size={14} />
+                          <span>Idle</span>
+                        </>
+                      )}
+                    </motion.span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
