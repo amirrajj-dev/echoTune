@@ -86,7 +86,7 @@ const FeaturedSongs = () => {
           animate="visible"
         >
           <AnimatePresence>
-            {featuredSongs.map((song) => (
+            {featuredSongs.length > 0 ? featuredSongs.map((song) => (
               <motion.div
                 key={song._id}
                 whileHover={{ scale: 1.03 }}
@@ -98,7 +98,9 @@ const FeaturedSongs = () => {
                   onPlayPause={handlePlayPause}
                 />
               </motion.div>
-            ))}
+            )) : (
+              <p className="text-center text-lg">No featured songs found.</p>
+            )}
           </AnimatePresence>
         </motion.div>
       )}

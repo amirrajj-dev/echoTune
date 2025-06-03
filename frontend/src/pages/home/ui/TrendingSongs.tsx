@@ -72,7 +72,7 @@ const TrendingSongs = () => {
           animate="visible"
         >
           <AnimatePresence>
-            {trendingSongs.map((song) => (
+            {trendingSongs.length > 0 ? trendingSongs.map((song) => (
               <motion.div
                 key={song._id}
                 whileHover={{ scale: 1.03 }}
@@ -84,7 +84,9 @@ const TrendingSongs = () => {
                   onPlayPause={handlePlayPause}
                 />
               </motion.div>
-            ))}
+            )) : (
+              <p className="text-center text-nowrap text-lg">No trending songs found.</p>
+            )}
           </AnimatePresence>
         </motion.div>
       )}

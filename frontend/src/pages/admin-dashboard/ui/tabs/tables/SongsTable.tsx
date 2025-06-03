@@ -1,4 +1,4 @@
-import { useMutation , useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../../../../configs/axios";
 import { Trash } from "lucide-react";
 import { motion } from "framer-motion";
@@ -7,7 +7,7 @@ import SongsTableSkeleton from "../../../../../components/ui/skeletons/SongsTabl
 import { useSongs } from "../../../../../hooks/song.hook";
 
 const SongsTable = () => {
-  const { data: songs, isLoading } = useSongs()
+  const { data: songs, isLoading } = useSongs();
   const queryClient = useQueryClient();
 
   const { mutate: deleteSong, isPending } = useMutation({
@@ -24,6 +24,7 @@ const SongsTable = () => {
       queryClient.invalidateQueries({ queryKey: ["songs"] });
       queryClient.invalidateQueries({ queryKey: ["albums"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
+      queryClient.invalidateQueries({ queryKey: ["favourites"] });
     },
     onError: (e) => {
       console.log(e);
@@ -58,31 +59,39 @@ const SongsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {songs?.map((song) => (
-            <tr key={song._id}>
-              <td className="font-semibold flex items-center gap-2 text-xs sm:text-sm">
-                <img
-                  src={song.imageUrl}
-                  className="size-8 sm:size-10 rounded-md"
-                  alt={`${song.title} image`}
-                />
-                {song.title}
-              </td>
-              <td className="text-xs sm:text-sm">{song.artist}</td>
-              <td className="text-xs sm:text-sm">
-                {new Date(song.createdAt).toLocaleDateString()}
-              </td>
-              <td className="text-right">
-                <button
-                  disabled={isPending}
-                  className="btn btn-sm btn-error btn-circle btn-soft"
-                  onClick={() => handleDeleteSong(song._id)}
-                >
-                  <Trash className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
+          {songs?.length > 0 ? (
+            songs?.map((song) => (
+              <tr key={song._id}>
+                <td className="font-semibold flex items-center gap-2 text-xs sm:text-sm">
+                  <img
+                    src={song.imageUrl}
+                    className="size-8 sm:size-10 rounded-md"
+                    alt={`${song.title} image`}
+                  />
+                  {song.title}
+                </td>
+                <td className="text-xs sm:text-sm">{song.artist}</td>
+                <td className="text-xs sm:text-sm">
+                  {new Date(song.createdAt).toLocaleDateString()}
+                </td>
+                <td className="text-right">
+                  <button
+                    disabled={isPending}
+                    className="btn btn-sm btn-error btn-circle btn-soft"
+                    onClick={() => handleDeleteSong(song._id)}
+                  >
+                    <Trash className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={5} className="text-center">
+                No Songs Found
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </motion.div>

@@ -24,6 +24,7 @@ const AlbumsTable = () => {
       queryClient.invalidateQueries({ queryKey: ["songs"] });
       queryClient.invalidateQueries({ queryKey: ["albums"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
+      queryClient.invalidateQueries({queryKey : ['favourites']});
     },
     onError: (e) => {
       console.log(e);
@@ -59,7 +60,7 @@ const AlbumsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {albums?.map((album) => (
+          {albums!.length > 0 ? albums?.map((album) => (
             <tr key={album._id}>
               <td className="font-semibold flex items-center gap-2 text-xs sm:text-sm">
                 <img
@@ -83,7 +84,13 @@ const AlbumsTable = () => {
                 </button>
               </td>
             </tr>
-          ))}
+          )) : (
+            <tr>
+              <td colSpan={5} className="text-center">
+                No Albums Found
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </motion.div>

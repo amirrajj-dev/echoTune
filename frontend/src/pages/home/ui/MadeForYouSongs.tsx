@@ -71,7 +71,7 @@ const MadeForYouSongs = () => {
           animate="visible"
         >
           <AnimatePresence>
-            {madeForYouSongs.map((song) => (
+            {madeForYouSongs.length > 0 ? madeForYouSongs.map((song) => (
               <motion.div
                 key={song._id}
                 whileHover={{ scale: 1.03 }}
@@ -83,7 +83,9 @@ const MadeForYouSongs = () => {
                   onPlayPause={handlePlayPause}
                 />
               </motion.div>
-            ))}
+            )) : (
+              <p className="text-lg text-nowrap">No made for you songs found.</p>
+            )}
           </AnimatePresence>
         </motion.div>
       )}

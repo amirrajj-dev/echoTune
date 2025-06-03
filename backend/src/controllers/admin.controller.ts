@@ -3,6 +3,7 @@ import { songsModel } from "../models/song.model";
 import { albumsModel } from "../models/album.model";
 import { uploadToCloudinary } from "../utils/upload";
 import { deleteFromCloudinary } from "../utils/deleteFromCloudinary";
+import { usersModel } from "../models/user.model";
 
 export const creatSong = async (
   req: Request,
@@ -62,6 +63,7 @@ export const deleteSong = async (
 ) => {
   try {
     const { id } = req.params;
+    const currentUserClerkId = req.auth.userId
     if (!id) {
       return res.status(400).json({ message: "Song ID is required." });
     }
@@ -73,6 +75,12 @@ export const deleteSong = async (
       await albumsModel.findByIdAndUpdate(song.albumId, {
         $pull: { songs: song._id },
       });
+    }
+    // delete song from user favourite songs if it exists in user favourite songs array
+    const user = await usersModel.findOne({clerkId : currentUserClerkId})
+    if (user && user.favouriteSongs.includes(song._id)) {
+      user.favouriteSongs = user.favouriteSongs.filter((id : string) => id.toString() !== song._id);
+      await user.save();
     }
     if (song.audioPublicId) await deleteFromCloudinary(song.audioPublicId , 'video');
     if (song.imagePublicId) await deleteFromCloudinary(song.imagePublicId , 'image');
@@ -121,6 +129,7 @@ export const createAlbum = async (req : Request , res : Response , next : NextFu
 export const deleteAlbum = async (req : Request , res : Response , next : NextFunction)=>{
     try{
         const { id } = req.params;
+        const currentUserClerkId = req.auth.userId
         if (!id) {
             return res.status(400).json({ message: "Album ID is required." });
         }
@@ -136,6 +145,12 @@ export const deleteAlbum = async (req : Request , res : Response , next : NextFu
             if (song.audioPublicId) await deleteFromCloudinary(song.audioPublicId , 'video');
             if (song.imagePublicId) await deleteFromCloudinary(song.imagePublicId , 'image');
           }
+        }
+        // delete songs that are from this album from user favourite songs array
+        const user = await usersModel.findOne({clerkId : currentUserClerkId}).populate('favouriteSongs')
+        if (user.favouriteSongs.includes(album._id)) {
+          user.favouriteSongs.filter((song : any) => song.albumId !== album._id);
+          await user.save();
         }
         // Delete all songs associated with this album
         await songsModel.deleteMany({ albumId: id });
