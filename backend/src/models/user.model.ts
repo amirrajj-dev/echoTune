@@ -21,6 +21,12 @@ const schema = new mongoose.Schema({
             required: false,
             default: []
         }
+    ],
+    playLists : [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "playlist",
+        }
     ]
 },{
     timestamps: true

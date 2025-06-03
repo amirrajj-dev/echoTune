@@ -11,6 +11,7 @@ import songRoutes from "./routes/song.route";
 import albumRoutes from "./routes/album.route";
 import statRoutes from "./routes/stat.route";
 import adminRoutes from "./routes/admin.route";
+import playListRoutes from "./routes/playlist.route";
 //db
 import { connectToDb } from "./db/connectToDb";
 //middlewares
@@ -86,6 +87,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/songs", songRoutes);
 app.use("/api/albums", albumRoutes);
 app.use("/api/stats", statRoutes);
+app.use('/api/playlists' , playListRoutes)
 
 app.use(errorMiddleware);
 
