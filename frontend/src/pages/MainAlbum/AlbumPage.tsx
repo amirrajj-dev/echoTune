@@ -7,7 +7,7 @@ import type { IAlbum } from "../../interfaces/interfaces";
 import { Play, Pause, Music2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import MainAlbumSkeleton from "../../components/ui/skeletons/MainAlbumSkeleton";
-import MusicPlayer from "../../components/shared/MusicPlayer";
+import MusicPlayer from "../../components/shared/musicPlayer/MusicPlayer";
 
 interface AlbumResponse {
   data: IAlbum;
@@ -36,7 +36,7 @@ const AlbumPage = () => {
     isPlaying,
     playSong,
     pauseSong,
-    setIsShowMusicPlayer
+    setIsShowMusicPlayer,
   } = useMusic();
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const AlbumPage = () => {
 
   const handlePlayPauseAlbum = () => {
     if (album && album.songs.length > 0 && !isPlaying) {
-      setIsShowMusicPlayer(true)
+      setIsShowMusicPlayer(true);
       if (currentSong) {
         playSong();
       } else {
@@ -64,7 +64,7 @@ const AlbumPage = () => {
   const handlePlaySong = (songId: string) => {
     const song = album?.songs.find((s) => s._id === songId);
     if (!song) return;
-    setIsShowMusicPlayer(true)
+    setIsShowMusicPlayer(true);
     if (currentSong?._id === song._id) {
       if (isPlaying) {
         pauseSong();
@@ -222,7 +222,7 @@ const AlbumPage = () => {
           </table>
         </motion.div>
       </div>
-        <MusicPlayer />
+      <MusicPlayer />
     </>
   );
 };

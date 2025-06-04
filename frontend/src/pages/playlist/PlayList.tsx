@@ -8,7 +8,7 @@ import { axiosInstance } from "../../configs/axios";
 import { toast } from "sonner";
 import type { IAlbum, ISong } from "../../interfaces/interfaces";
 import { usePlayList } from "../../hooks/playlist.hook";
-import MusicPlayer from "../../components/shared/MusicPlayer";
+import MusicPlayer from "../../components/shared/musicPlayer/MusicPlayer";
 import PlaylistHeader from "./ui/PlayListHeader";
 import PlaylistBanner from "./ui/PlayListBanner";
 import ActionButtons from "./ui/ActionButtons";
@@ -47,10 +47,10 @@ const PlaylistPage = () => {
   const [isAddSongModalOpen, setIsAddSongModalOpen] = useState(false);
   const [newName, setNewName] = useState("");
 
-  const {
-    data: playlist,
-    isLoading: isPlaylistLoading
-  } = usePlayList(isSignedIn as boolean, playlistId as string);
+  const { data: playlist, isLoading: isPlaylistLoading } = usePlayList(
+    isSignedIn as boolean,
+    playlistId as string
+  );
 
   const { mutate: updatePlayList, isPending } = useMutation({
     mutationFn: (updates: { songId?: string; name?: string }) =>

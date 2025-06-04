@@ -6,7 +6,7 @@ import type { IAlbum, ISong } from "../../interfaces/interfaces";
 import { useMusic } from "../../store/music.store";
 import { useFavourites } from "../../hooks/favourite.hook";
 import { Music2 } from "lucide-react";
-import MusicPlayer from "../../components/shared/MusicPlayer";
+import MusicPlayer from "../../components/shared/musicPlayer/MusicPlayer";
 
 const FavouritesPage = () => {
   const { user, isSignedIn } = useUser();
@@ -19,7 +19,10 @@ const FavouritesPage = () => {
     setIsShowMusicPlayer,
   } = useMusic();
 
-  const {data : favouriteSongs , isLoading} = useFavourites(user?.id as string, isSignedIn as boolean);
+  const { data: favouriteSongs, isLoading } = useFavourites(
+    user?.id as string,
+    isSignedIn as boolean
+  );
 
   const handlePlayPause = (song: ISong) => {
     setIsShowMusicPlayer(true);
@@ -77,11 +80,11 @@ const FavouritesPage = () => {
       <main>
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(4)].map((_ , index) => (
-                  <div
-                    key={index}
-                    className="bg-base-300 h-96 rounded-xl skeleton"
-                  />
+            {[...Array(4)].map((_, index) => (
+              <div
+                key={index}
+                className="bg-base-300 h-96 rounded-xl skeleton"
+              />
             ))}
           </div>
         ) : favouriteSongs?.length === 0 ? (
@@ -92,7 +95,7 @@ const FavouritesPage = () => {
           >
             <div className="flex flex-col items-center gap-4">
               <div className="bg-gradient-to-br from-primary to-secondary p-3 rounded-full">
-                <Music2/>
+                <Music2 />
               </div>
               <p className="text-lg text-base-content/70">
                 No favorite songs yet.
@@ -138,7 +141,7 @@ const FavouritesPage = () => {
           </AnimatePresence>
         )}
       </main>
-      <MusicPlayer/>
+      <MusicPlayer />
     </motion.div>
   );
 };
