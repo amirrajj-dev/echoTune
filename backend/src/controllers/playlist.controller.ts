@@ -33,7 +33,7 @@ export const createPlaylist = async (
     const playlist = await playlistsModel.create({ name, owner: user._id });
     await usersModel.findOneAndUpdate(
       { clerkId: userId },
-      { $push: { playlists: playlist._id } }
+      { $push: { playLists: playlist._id } }
     );
     return res.status(201).json({
       message: "Playlist Created Successfully",
@@ -52,8 +52,15 @@ export const getUserPlaylists = async (
   try {
     const userId = req.auth.userId;
     const user = await usersModel
-      .findOne({ clerkId: userId })
-      .populate("playlists");
+  .findOne({ clerkId: userId })
+  .populate({
+    path: "playLists",
+    select: "name _id",
+    populate: {
+      path: "songs",
+      select: "title _id",
+    },
+  });
     if (!user) {
       return res.status(404).json({
         message: "User Not Found",
@@ -63,7 +70,7 @@ export const getUserPlaylists = async (
     return res.status(200).json({
       message: "Playlists Fetched Successfully",
       success: true,
-      data: user.playlists,
+      data: user.playLists,
     });
   } catch (error) {
     next(error);
@@ -145,7 +152,7 @@ export const updatePlaylist = async (
     let updated = false;
 
     if (
-      songId.trim().length > 0
+      songId?.trim().length > 0
     ) {
       const song = await songsModel.findById(songId);
       if (!song) {
@@ -154,8 +161,8 @@ export const updatePlaylist = async (
           success: false,
         });
       }
-      if (playlist.songs.includes(song._id)) {
-        playlist.songs = playlist.songs.filter((id : string) => id.toString() !== songId.toString());
+      if (playlist.songs.some((p: any)=>p.title === song.title)) {
+        playlist.songs = playlist.songs.filter((p : any) => p.title !== song.title);
         updated = true;
       } else {
         playlist.songs.push(songId);
