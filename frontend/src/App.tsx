@@ -12,6 +12,8 @@ import { Toaster } from "sonner";
 import NotFound from "./pages/notfound/NotFound";
 import FavouritesPage from "./pages/favourites/FavouritesPage";
 import { useAuthStore } from "./store/auth.store";
+import PlayListsPage from "./pages/playlists/PlayListsPage";
+import PlaylistPage from "./pages/playlist/PlayList";
 
 const App = () => {
   const { theme, initializeTheme } = useTheme();
@@ -41,6 +43,8 @@ const App = () => {
           }
         />
       <Route path="/admin-dashboard" element={isSignedIn && isAdmin ? <AdminDashboard/> : <NotFound/>} />
+      <Route path="/playlists" element={isSignedIn ? <PlayListsPage/> : <NotFound/>} />
+      <Route path="/playlists/:id" element={isSignedIn ? <PlaylistPage/> : <NotFound/>} />
       <Route path="/favourites" element={isSignedIn ? <FavouritesPage/> : <NotFound/>} />
       <Route path="*" element={<NotFound/>} />
         <Route element={<MainLayout />}>

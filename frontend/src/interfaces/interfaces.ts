@@ -40,3 +40,12 @@ export interface IMessage {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IPlayList {
+  _id: string;
+  name : string;
+  songs : ISong[];
+  owner : IUser;
+  createdAt: Date;
+  updatedAt: Date;
+}
