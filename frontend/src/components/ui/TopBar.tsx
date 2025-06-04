@@ -3,7 +3,7 @@ import Logo from "./Logo";
 import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/clerk-react";
 import SignInWithGoogleBtn from "./SignInWithGoogleBtn";
 import { motion } from "framer-motion";
-import { Heart, LayoutDashboard, Menu, Music2 } from "lucide-react";
+import { Heart, LayoutDashboard, ListMusic, Menu, Music2 } from "lucide-react";
 import ThemePallette from "./theme/ThemePallette";
 import { useEffect } from "react";
 import { useMusic } from "../../store/music.store";
@@ -140,7 +140,7 @@ const TopBar = () => {
                    whileTap={{ scale: 0.95 }}
                    className="btn bg-gradient-to-br from-primary to-secondary text-white"
                  >
-                   <LayoutDashboard size={16} />
+                   <ListMusic size={16} />
                    PlayLists
                  </motion.button>
                </Link>
@@ -182,60 +182,48 @@ const TopBar = () => {
             htmlFor="topbar-drawer"
             className="drawer-overlay z-[900]"
           ></label>
-          <ul className="menu z-[920] p-4 w-80 min-h-full bg-base-200 text-base-content gap-2">
+          <ul className="menu z-[920] items-center p-4 w-68 min-h-full bg-base-200 text-base-content gap-2">
             {isSignedIn && (
-              <li>
-                <button className="btn btn-ghost justify-start gap-2 text-rose-500">
+              <li className="w-full">
+                <Link  to={'/favourites'} className="btn bg-rose-500 justify-center gap-2 w-full text-rose-50">
                   <Heart className="w-5 h-5" /> Favorites
-                </button>
+                </Link>
               </li>
             )}
-            <li>
-              <ThemePallette />
-            </li>
-            <li>
+            <li className="w-full">
               {currentSong && (
                 <motion.button
                   onClick={() => setIsShowMusicPlayer(!isShowMusicPlayer)}
-                  className="btn btn-success tooltip tooltip-right btn-soft btn-circle rotate-360"
+                  className="btn btn-success tooltip tooltip-right rotate-360"
                   data-tip={
                     isShowMusicPlayer
                       ? "Hide Music player"
                       : "Show Music player"
                   }
                 >
-                  <Music2 />
+                  {isShowMusicPlayer ? "Hide Music Player" : "Show Music Player"}
                 </motion.button>
               )}
             </li>
             {isAdmin && (
-              <li>
-                <Link to="/admin-dashboard" className="btn btn-outline gap-2">
+              <li className="w-full">
+                <Link to="/admin-dashboard" className="btn btn-primary gap-2">
                   <LayoutDashboard size={16} />
                   Admin Dashboard
                 </Link>
               </li>
             )}
-            <li>
             {isSignedIn && (
-               <motion.div
-               variants={{
-                 hidden: { opacity: 0, y: -5 },
-                 visible: { opacity: 1, y: 0 },
-               }}
-             >
-               <Link to="/playlists">
-                 <motion.button
-                   whileHover={{ scale: 1.05 }}
-                   whileTap={{ scale: 0.95 }}
-                   className="btn bg-gradient-to-br from-primary to-secondary text-white"
-                 >
-                   <LayoutDashboard size={16} />
+            <li className="w-full">
+
+               <Link to="/playlists" className="w-full  btn btn-accent">
+                   <ListMusic size={16} />
                    PlayLists
-                 </motion.button>
                </Link>
-             </motion.div>
+            </li>
             )}
+            <li className="w-full flex items-center justify-center">
+              <ThemePallette />
             </li>
             <SignedOut>
               <li>
@@ -243,7 +231,7 @@ const TopBar = () => {
               </li>
             </SignedOut>
             <SignedIn>
-              <li>
+              <li className="w-full flex justify-center items-center">
                 <UserButton afterSignOutUrl="/" />
               </li>
             </SignedIn>

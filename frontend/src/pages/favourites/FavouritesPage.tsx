@@ -70,14 +70,14 @@ const FavouritesPage = () => {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="min-h-screen bg-base-100 p-4 sm:p-6 lg:p-8"
     >
-      <header className="mb-8 flex items-center justify-between">
+      <header className="mb-8 flex flex-col gap-4 sm:gap-0 sm:flex-row items-center justify-between bg-base-200 backdrop-blur-lg rounded-xl shadow-xl border border-white/10 p-4">
         <Logo />
         <h1 className="text-2xl sm:text-3xl font-bold text-base-content">
           Your Favorite Songs
         </h1>
       </header>
 
-      <main>
+      <main className="bg-base-200 backdrop-blur-lg rounded-xl shadow-xl border border-white/10 p-4">
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(4)].map((_, index) => (
@@ -108,7 +108,7 @@ const FavouritesPage = () => {
         ) : (
           <AnimatePresence>
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
               initial="hidden"
               animate="visible"
               variants={{

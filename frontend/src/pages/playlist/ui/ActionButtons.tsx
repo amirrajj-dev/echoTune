@@ -68,7 +68,11 @@ const ActionButtons = ({
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         className="btn btn-soft btn-error tooltip w-full sm:w-auto"
-        onClick={deletePlayList}
+        onClick={()=>{
+          if (confirm('are you sure you want to delete this playlist ? ')){
+            deletePlayList()
+          }
+        }}
         disabled={isPendingDeletePlayList}
         data-tip="Delete Playlist"
       >

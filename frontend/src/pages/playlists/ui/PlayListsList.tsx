@@ -38,7 +38,7 @@ const PlaylistsList = ({ playlists, isLoading }: PlaylistsListProps) => {
       ) : (
         <AnimatePresence>
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 bg-base-200 backdrop-blur-lg rounded-xl shadow-xl border border-white/10"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 bg-base-200 backdrop-blur-lg rounded-xl shadow-xl max-h-[500px] overflow-y-scroll border border-white/10"
             variants={{
               hidden: { opacity: 0 },
               visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
