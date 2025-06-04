@@ -75,6 +75,7 @@ const TopBar = () => {
             }}
           >
             {isSignedIn && (
+              <>
               <Link to={"/favourites"}>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
@@ -84,6 +85,7 @@ const TopBar = () => {
                   <Heart className="w-5 h-5" />
                 </motion.button>
               </Link>
+              </>
             )}
 
             <motion.div
@@ -123,6 +125,26 @@ const TopBar = () => {
                   </motion.button>
                 </Link>
               </motion.div>
+            )}
+
+            {isSignedIn && (
+               <motion.div
+               variants={{
+                 hidden: { opacity: 0, y: -5 },
+                 visible: { opacity: 1, y: 0 },
+               }}
+             >
+               <Link to="/playlists">
+                 <motion.button
+                   whileHover={{ scale: 1.05 }}
+                   whileTap={{ scale: 0.95 }}
+                   className="btn bg-gradient-to-br from-primary to-secondary text-white"
+                 >
+                   <LayoutDashboard size={16} />
+                   PlayLists
+                 </motion.button>
+               </Link>
+             </motion.div>
             )}
 
             <SignedOut>
@@ -194,6 +216,27 @@ const TopBar = () => {
                 </Link>
               </li>
             )}
+            <li>
+            {isSignedIn && (
+               <motion.div
+               variants={{
+                 hidden: { opacity: 0, y: -5 },
+                 visible: { opacity: 1, y: 0 },
+               }}
+             >
+               <Link to="/playlists">
+                 <motion.button
+                   whileHover={{ scale: 1.05 }}
+                   whileTap={{ scale: 0.95 }}
+                   className="btn bg-gradient-to-br from-primary to-secondary text-white"
+                 >
+                   <LayoutDashboard size={16} />
+                   PlayLists
+                 </motion.button>
+               </Link>
+             </motion.div>
+            )}
+            </li>
             <SignedOut>
               <li>
                 <SignInWithGoogleBtn />

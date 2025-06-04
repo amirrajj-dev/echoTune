@@ -82,7 +82,7 @@ const AlbumPage = () => {
 
   return (
     <>
-      <div className="p-6 space-y-6 bg-base-100/60 backdrop-blur-lg rounded-xl shadow-xl">
+      <div className="p-6 space-y-6 bg-base-100/60 backdrop-blur-lg rounded-xl shadow-xl border border-white/10">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}

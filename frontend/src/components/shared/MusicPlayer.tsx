@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Play,
@@ -15,6 +15,8 @@ import {
   RotateCw,
   RotateCcw,
   Heart,
+  ListMusic,
+  Loader2,
 } from "lucide-react";
 import { useMusic } from "../../store/music.store";
 import { useChatStore } from "../../store/chat.store";
@@ -23,6 +25,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../configs/axios";
 import { toast } from "sonner";
 import { useFavourites } from "../../hooks/favourite.hook";
+import type { IPlayList } from "../../interfaces/interfaces";
+import { usePlayLists } from "../../hooks/playlists.hook";
 
 const MusicPlayer = () => {
   const {
@@ -45,7 +49,7 @@ const MusicPlayer = () => {
     seekBackward,
     seekForward,
     isShowMusicPlayer,
-    setIsShowMusicPlayer
+    setIsShowMusicPlayer,
   } = useMusic();
   const { socket } = useChatStore();
   const { user } = useUser();
@@ -57,7 +61,9 @@ const MusicPlayer = () => {
     user?.id as string,
     isSignedIn as boolean
   );
-  const isInTheUserFavouriteSongs = userFavouriteSongs?.some(s=>s._id.includes(currentSong?._id as string))
+  const isInTheUserFavouriteSongs = userFavouriteSongs?.some((s) =>
+    s._id.includes(currentSong?._id as string)
+  );
 
   const formatTime = (time: number) =>
     new Date(time * 1000).toISOString().substring(14, 19);
@@ -83,7 +89,7 @@ const MusicPlayer = () => {
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleLoadedMetadata = () => {
       setDuration(audio.duration || 0);
-    };;
+    };
 
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
@@ -122,26 +128,73 @@ const MusicPlayer = () => {
     return <Repeat className="w-4 h-4 opacity-50" />;
   };
 
-  const { mutate: AddToFavouriteSongs, isPending } = useMutation({
-    mutationFn: async (songId: string) => {
-      const { data } = await axiosInstance.put(`/users/favourites/${songId}`);
-      return data;
+  const { mutate: AddToFavouriteSongs, isPending: isPendingAddToPlaylist } =
+    useMutation({
+      mutationFn: async (songId: string) => {
+        const { data } = await axiosInstance.put(`/users/favourites/${songId}`);
+        return data;
+      },
+      onSuccess: (res) => {
+        if (res.message === "Song Removed From Favourite Songs") {
+          toast.success("Song removed from favourites successfully");
+          setIsShowMusicPlayer(false);
+          pauseSong();
+        } else {
+          toast.success("Song added to favourites successfully");
+        }
+        queryClient.invalidateQueries({ queryKey: ["favourites"] });
+      },
+      onError: (e) => {
+        console.log(e);
+        toast.error(e.message || "Error adding song to favourites");
+      },
+    });
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { data: playlists, isLoading: isPlaylistsLoading } = usePlayLists(
+    isSignedIn as boolean
+  );
+
+  const { mutate: addToPlaylist, isPending } = useMutation({
+    mutationFn: async (playlistId: string) => {
+      const { data } = await axiosInstance.put(`/playlists/${playlistId}`, {
+        songId: currentSong?._id,
+      });
+      return data.data as IPlayList;
     },
-    onSuccess: (res) => {
-      if (res.message === "Song Removed From Favourite Songs") {
-        toast.success("Song removed from favourites successfully");
-        setIsShowMusicPlayer(false);
-        pauseSong()
-      } else {
-        toast.success("Song added to favourites successfully");
-      }
-      queryClient.invalidateQueries({ queryKey: ["favourites"] });
+    onSuccess: (data, playlistId) => {
+      console.log(data);
+      queryClient.invalidateQueries({ queryKey: ["playlists"] });
+      queryClient.invalidateQueries({ queryKey: ["playlist", playlistId] });
+      setIsDropdownOpen(false);
+      toast.success(`Added "${currentSong?.title}" to playlist`);
     },
-    onError: (e) => {
-      console.log(e);
-      toast.error(e.message || "Error adding song to favourites");
+    onError: () => {
+      toast.error("Error adding song to playlist");
     },
   });
+
+  const handleAddToPlaylist = (playlistId: string) => {
+    addToPlaylist(playlistId);
+  };
+
+  const playListDropDownRef = useRef<HTMLDivElement | null>(null);
+  const playListButtonRef = useRef<HTMLButtonElement | null>(null);
+
+    const handleClickOutSide = useCallback((event : MouseEvent) => {
+      if (
+        isDropdownOpen &&
+        !playListDropDownRef.current?.contains(event.target as Node) &&
+        !playListButtonRef.current?.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    } , [isDropdownOpen])
+
+    useEffect(() => {
+      document.addEventListener("mousedown", handleClickOutSide);
+      return () => document.removeEventListener("mousedown", handleClickOutSide);
+    }, [handleClickOutSide]);
 
   return (
     <AnimatePresence>
@@ -153,7 +206,7 @@ const MusicPlayer = () => {
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
           className="fixed bottom-0 left-0 right-0 z-[999] bg-base-300 backdrop-blur-xl border-t border-base-content/10 p-4 shadow-2xl sm:p-6"
         >
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center gap-4 sm:gap-6">
+          <div className="max-w-full mx-auto flex flex-col lg:flex-row items-start lg:items-center gap-4 sm:gap-6">
             {/* Song Info */}
             <div className="flex items-center gap-4 flex-1 min-w-0">
               <motion.div whileHover={{ scale: 1.05 }} className="relative">
@@ -279,12 +332,102 @@ const MusicPlayer = () => {
                   whileHover={{ scale: 1.1, rotate: 10 }}
                   whileTap={{ scale: 0.9 }}
                   className={`p-2 tooltip rounded-full transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
-                  data-tip={isInTheUserFavouriteSongs ? "Remove From Favourites" : "Add To Favourites"}
+                  data-tip={
+                    isInTheUserFavouriteSongs
+                      ? "Remove From Favourites"
+                      : "Add To Favourites"
+                  }
                   onClick={() => AddToFavouriteSongs(currentSong._id)}
                   disabled={isPending}
                 >
                   <Heart className="w-4 h-4" />
                 </motion.button>
+                {isSignedIn && (
+                  <div className="relative">
+                    <motion.button
+                      ref={playListButtonRef}
+                      whileHover={{ scale: 1.1, rotate: 10 }}
+                      whileTap={{ scale: 0.9 }}
+                      className={`p-2 tooltip rounded-full transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
+                      data-tip={
+                       "Add To Playlist"
+                      }
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      disabled={isPending}
+                    >
+                      <ListMusic className="w-4 h-4" />
+                    </motion.button>
+                    {isDropdownOpen && (
+                      <motion.div
+                        ref={playListDropDownRef}
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="absolute bottom-10 right-4 md:left-4 bg-base-100 w-56 rounded-xl"
+                      >
+                        <h2 className="border-b border-base-content/50 p-2 bg-gradient-to-br from-primary to-secondary rounded-t-xl">
+                          Add To PlayList
+                        </h2>
+                        <ul className="flex flex-col gap-2">
+                          {isPlaylistsLoading ? (
+                            <motion.li
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{
+                                duration: 0.2,
+                              }}
+                              className="p-2"
+                            >
+                              <span className="animate-pulse">Loading ...</span>
+                            </motion.li>
+                          ) : playlists?.length === 0 ? (
+                            <motion.li
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{
+                                duration: 0.2,
+                              }}
+                              className="p-2"
+                            >
+                              <span className="text-base-content/70 text-sm text-center">
+                                No playlists available :(
+                              </span>
+                            </motion.li>
+                          ) : (
+                            playlists?.map((playlist) =>{
+                              const alreadyInPlayList = playlist.songs.some(p=>p.title === currentSong.title)
+                              return (
+                                <motion.li
+                                key={playlist._id}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{
+                                  duration: 0.2,
+                                  delay: 0.05 * playlists.indexOf(playlist),
+                                }}
+                                className="hover:bg-gradient-to-br hover:from-primary hover:to-secondary hover:text-base-100"
+                                onClick={() =>
+                                  handleAddToPlaylist(playlist._id)
+                                }
+                              >
+                                <button disabled={isPendingAddToPlaylist || alreadyInPlayList} className="w-full h-full cursor-pointer text-left disabled:cursor-not-allowed disabled:opacity-50 p-2">
+                                  <span>{isPending ? <Loader2 className="size-4 animate-spin" /> : playlist.name}</span>
+                                  {alreadyInPlayList && (
+                                    <span className="badge badge-primary badge-xs ml-2">
+                                      Added
+                                    </span>
+                                  )}
+                                </button>
+                              </motion.li>
+                              )
+                            })
+                          )}
+                        </ul>
+                      </motion.div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Volume & Seek */}
