@@ -182,7 +182,7 @@ const TopBar = () => {
             htmlFor="topbar-drawer"
             className="drawer-overlay z-[900]"
           ></label>
-          <ul className="menu z-[920] items-center p-4 w-68 min-h-full bg-base-200 text-base-content gap-2">
+          <ul className="menu z-[920] p-4 w-68 min-h-full bg-base-200 text-base-content gap-2">
             {isSignedIn && (
               <li className="w-full">
                 <Link  to={'/favourites'} className="btn bg-rose-500 justify-center gap-2 w-full text-rose-50">
@@ -190,8 +190,8 @@ const TopBar = () => {
                 </Link>
               </li>
             )}
-            <li className="w-full">
               {currentSong && (
+            <li className="w-full">
                 <motion.button
                   onClick={() => setIsShowMusicPlayer(!isShowMusicPlayer)}
                   className="btn btn-success tooltip tooltip-right rotate-360"
@@ -203,8 +203,8 @@ const TopBar = () => {
                 >
                   {isShowMusicPlayer ? "Hide Music Player" : "Show Music Player"}
                 </motion.button>
-              )}
             </li>
+              )}
             {isAdmin && (
               <li className="w-full">
                 <Link to="/admin-dashboard" className="btn btn-primary gap-2">

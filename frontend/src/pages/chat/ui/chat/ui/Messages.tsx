@@ -31,10 +31,15 @@ const Messages = () => {
   };
 
   useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth"  });
-    }
-  }, [messages]);
+  const container = bottomRef.current?.parentElement?.parentElement
+  console.log(container);
+  if (container) {
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: "smooth",
+    });
+  }
+}, [messages]);
 
   useEffect(() => {
     if (!socket || !selectedUser?.clerkId) return;
@@ -48,9 +53,6 @@ const Messages = () => {
           return [...oldData, message];
         }
       );
-      if (bottomRef.current) {
-        bottomRef.current.scrollIntoView({ behavior: "smooth" });
-      }
     };
 
     socket.on("receive_message", handleNewMessage);

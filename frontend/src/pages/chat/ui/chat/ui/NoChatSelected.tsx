@@ -33,7 +33,7 @@ const NoChatSelected = () => {
           Select a conversation on the left to start messaging. This area will
         update when you choose a chat.
         ` : `
-          click on the toggle menu button on the top right to select a conversation
+          click on the toggle menu button on the top left to select a conversation
         `}
       </p>
 
