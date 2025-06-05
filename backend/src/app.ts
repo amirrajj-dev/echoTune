@@ -89,6 +89,13 @@ app.use("/api/albums", albumRoutes);
 app.use("/api/stats", statRoutes);
 app.use('/api/playlists' , playListRoutes)
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+  app.get("*", (req: Request, res: Response) => {
+    res.sendFile(path.resolve(__dirname, "../../frontend/dist/index.html"));
+  });
+}
+
 app.use(errorMiddleware);
 
 httpServer.listen(port, async () => {

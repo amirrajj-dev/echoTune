@@ -59,7 +59,7 @@ const SongsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {songs?.length > 0 ? (
+          {songs && songs?.length > 0 ? (
             songs?.map((song) => (
               <tr key={song._id}>
                 <td className="font-semibold flex items-center gap-2 text-xs sm:text-sm">

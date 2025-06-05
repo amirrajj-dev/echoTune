@@ -1,5 +1,4 @@
 import { useSignIn } from "@clerk/clerk-react";
-import React from "react";
 
 const SignInWithGoogleBtn = () => {
     const {signIn , isLoaded} = useSignIn();

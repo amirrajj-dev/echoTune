@@ -18,7 +18,7 @@
     "socket.io": "^4.8.1"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "npm install && npm install --legacy-peer-deps --prefix frontend && npm run build --prefix frontend && tsc",
     "start": "node ./backend/dist/app.js",
     "dev": "nodemon --watch ./backend/src --exec ts-node ./backend/src/app.ts",
     "prestart": "npm run build",

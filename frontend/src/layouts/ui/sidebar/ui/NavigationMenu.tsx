@@ -1,7 +1,6 @@
 import { Home, MessageSquare } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import React from "react";
 
 const navItems = [
   { to: "/", label: "Home", icon: Home },
