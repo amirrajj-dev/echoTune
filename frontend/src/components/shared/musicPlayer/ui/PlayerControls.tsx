@@ -134,7 +134,7 @@ const PlayerControls = ({
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.95 }}
         onClick={isPlaying ? pauseSong : playSong}
-        className="p-3 rounded-full tooltip cursor-pointer bg-gradient-to-r from-primary to-secondary text-base-100 shadow-lg snap-center"
+        className="p-3 rounded-full tooltip cursor-pointer bg-gradient-to-r from-primary to-secondary text-base-content shadow-lg snap-center"
         data-tip={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (

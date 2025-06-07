@@ -96,7 +96,7 @@ const TopBar = () => {
             {currentSong && (
               <motion.button
                 onClick={() => setIsShowMusicPlayer(!isShowMusicPlayer)}
-                className="btn btn-success tooltip tooltip-left btn-sm btn-soft btn-circle"
+                className="btn bg-gradient-to-br from-primary to-secondary tooltip tooltip-left btn-sm btn-soft btn-circle"
                 whileHover={{ rotate: -20 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
                 data-tip={

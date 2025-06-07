@@ -41,7 +41,7 @@ const MusicCard = ({ song, isPlaying, onPlayPause }: Props) => {
               damping: 18,
               duration: 0.3,
             }}
-            className="btn btn-circle btn-sm bg-gradient-to-br from-primary to-secondary text-white border-none shadow-md"
+            className="btn btn-circle btn-sm bg-gradient-to-br from-primary to-secondary text-base-content border-none shadow-md"
           >
             {isPlaying ? <Pause size={18} /> : <Play size={18} />}
           </motion.div>
