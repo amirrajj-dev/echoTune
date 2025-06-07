@@ -118,7 +118,7 @@ const TopBar = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="btn bg-gradient-to-br from-primary to-secondary text-white"
+                    className="btn bg-gradient-to-br from-primary to-secondary text-base-content"
                   >
                     <LayoutDashboard size={16} />
                     Admin
@@ -138,7 +138,7 @@ const TopBar = () => {
                  <motion.button
                    whileHover={{ scale: 1.05 }}
                    whileTap={{ scale: 0.95 }}
-                   className="btn bg-gradient-to-br from-primary to-secondary text-white"
+                   className="btn bg-gradient-to-br from-primary to-secondary text-base-content"
                  >
                    <ListMusic size={16} />
                    PlayLists
@@ -169,7 +169,7 @@ const TopBar = () => {
           <motion.div className="sm:hidden">
             <label
               htmlFor="topbar-drawer"
-              className="btn btn-circle bg-gradient-to-tr from-primary to-secondary drawer-button text-white"
+              className="btn btn-circle bg-gradient-to-tr from-primary to-secondary drawer-button text-base-content"
             >
               <Menu />
             </label>

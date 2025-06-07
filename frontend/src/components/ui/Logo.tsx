@@ -16,10 +16,10 @@ const Logo = () => {
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
-          <Music3 className="w-6 h-6 text-white" />
+          <Music3 className="w-6 h-6 text-base-content" />
         </motion.div>
         <motion.h1
-          className="text-xl font-extrabold tracking-tight text-white drop-shadow-md"
+          className="text-xl font-extrabold tracking-tight text-base-content drop-shadow-md"
           whileHover={{ scale: 1.05 }}
         >
           EchoTune

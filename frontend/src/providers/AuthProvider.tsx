@@ -65,7 +65,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           className="flex flex-col items-center gap-4"
         >
           <motion.div
-            className="relative w-16 h-16 flex items-center justify-center rounded-full bg-white/20 shadow-xl backdrop-blur-md"
+            className="relative w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-tr from-primary to-secondary shadow-xl"
             animate={{ rotate: 360 }}
             transition={{
               repeat: Infinity,
@@ -73,7 +73,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               ease: "linear",
             }}
           >
-            <Music3 className="w-8 h-8 text-white" />
+            <Music3 className="w-8 h-8 text-base-content" />
             <span className="absolute w-full h-full rounded-full border-2 border-white/20 animate-pulse"></span>
           </motion.div>
 
@@ -81,7 +81,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-xl font-semibold tracking-wide drop-shadow-sm"
+            className="text-xl font-semibold text-base-content tracking-wide drop-shadow-sm"
           >
             Loading your vibe...
           </motion.h2>
@@ -90,7 +90,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.7 }}
             transition={{ delay: 0.6 }}
-            className="text-sm text-white/80 tracking-wide text-center"
+            className="text-sm text-base-content/80 tracking-wide text-center"
           >
             Spinning the beat 🎵💙
           </motion.p>

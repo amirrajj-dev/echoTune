@@ -4,13 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../../../store/theme.store";
 
 const themes = [
-  { theme: "light", bg: "bg-white", text: "text-base-300" },
-  { theme: "dark", bg: "bg-neutral-950", text: "text-neutral-100" },
-  { theme: "forest", bg: "bg-emerald-600", text: "text-emerald-content" },
-  { theme: "halloween", bg: "bg-base-300", text: "text-amber-600" },
-  { theme: "retro", bg: "bg-amber-300", text: "text-base-300" },
-  { theme: "emerald", bg: "bg-yellow-100", text: "text-base-300" },
-  { theme: "night", bg: "bg-indigo-950", text: "text-indigo-400" },
+  { theme: "light", bg: "bg-neutral-content", text: "text-black" },
+  { theme: "dark", bg: "bg-neutral", text: "text-neutral-content" },
+  { theme: "forest", bg: "bg-success", text: "text-success-content" },
+  { theme: "halloween", bg: "bg-secondary", text: "text-secondary-content" },
+  { theme: "retro", bg: "bg-warning", text: "text-warning-content" },
+  { theme: "emerald", bg: "bg-primary/70", text: "text-primary-content" },
+  { theme: "night", bg: "bg-indigo-950", text: "text-white" },
 ];
 
 const containerVariants = {
@@ -78,7 +78,7 @@ const ThemePallette = () => {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => handleChangeTheme(theme.theme)}
-                className={`btn btn-sm justify-between btn-ghost rounded-md px-3 font-medium flex items-center capitalize transition-all ${theme.bg} ${theme.text}`}
+                className={`btn btn-sm justify-between rounded-md px-3 font-medium flex items-center capitalize transition-all ${theme.bg} ${theme.text}`}
               >
                 {theme.theme}
                 {currentTheme === theme.theme && <Check className="w-4 h-4" />}
